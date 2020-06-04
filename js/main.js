@@ -27,21 +27,21 @@
    */
 
   var generateUniqueArrayFromSet = function (numberOfItems, setOfValues, isUnique) {
-    var copyArrayOfSet = setOfValues.slice();
-    var arrayFromSet = [];
+    var copySetOfValues = setOfValues.slice();
+    var uniqueItems = [];
 
     for (var index = 0; index < numberOfItems; index++) {
-      var randomIndex = window.util.getRandomInteger(0, copyArrayOfSet.length - 1);
-      var itemOfSet = copyArrayOfSet[randomIndex];
+      var randomIndex = window.util.getRandomInteger(0, copySetOfValues.length - 1);
+      var itemOfSet = copySetOfValues[randomIndex];
 
-      arrayFromSet.push(itemOfSet);
+      uniqueItems.push(itemOfSet);
 
       if (isUnique) {
-        copyArrayOfSet.splice(randomIndex, 1);
+        copySetOfValues.splice(randomIndex, 1);
       }
     }
 
-    return arrayFromSet;
+    return uniqueItems;
   };
 
   /**
@@ -114,7 +114,7 @@
   };
 
   var generateMocki = function () {
-    var mockiArray = [];
+    var mockiData = [];
 
     var avatarIDArray = generateUniqueArrayOfInteger(
         NUMBER_OF_ARRAY_ITEMS,
@@ -131,20 +131,20 @@
       );
       var yPosition = window.util.getRandomInteger(130, 630);
 
-      mockiArray.push(generateMokiItem(avatarID, xPosition, yPosition));
+      mockiData.push(generateMokiItem(avatarID, xPosition, yPosition));
     }
 
-    return mockiArray;
+    return mockiData;
   };
 
-  var mockiArray = generateMocki();
+  var mockiData = generateMocki();
 
   document.querySelector('.map').classList.remove('map--faded');
 
   var fragment = document.createDocumentFragment();
   var template = document.querySelector('#pin').content.querySelector('.map__pin');
 
-  mockiArray.forEach(function (mockiItem) {
+  mockiData.forEach(function (mockiItem) {
     fragment.appendChild(generateMapPin(template, mockiItem));
   });
 
