@@ -121,12 +121,13 @@
         1,
         8
     );
+    var offsetWidth = document.querySelector('.map__pins').offsetWidth;
 
     for (var index = 0; index < NUMBER_OF_ARRAY_ITEMS; index++) {
       var avatarID = ('0' + avatarIDArray[index]).slice(-2);
       var xPosition = window.util.getRandomInteger(
           0,
-          document.querySelector('.map__pins').offsetWidth
+          offsetWidth
       );
       var yPosition = window.util.getRandomInteger(130, 630);
 
