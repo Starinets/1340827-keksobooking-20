@@ -180,7 +180,7 @@
     }
   };
 
-  var addCardClose = function (mapCard, template, mockiItem) {
+  var addCardClose = function (mapCard, template) {
     var popupClose = template.querySelector('.popup__close');
     mapCard.appendChild(popupClose);
   };
@@ -281,7 +281,7 @@
     var mapCard = template.cloneNode(false);
 
     addCardAvatar(mapCard, template, mockiItem);
-    addCardClose(mapCard, template, mockiItem);
+    addCardClose(mapCard, template);
     addCardTitle(mapCard, template, mockiItem);
     addCardAddress(mapCard, template, mockiItem);
     addCardPrice(mapCard, template, mockiItem);
