@@ -137,9 +137,18 @@
     return mockiData;
   };
 
-  var generateMapPins = function(mokiData) {
+  var generateMapPins = function (mockiData) {
+    var fragment = document.createDocumentFragment();
+    var template = document.querySelector('#pin').content.querySelector('.map__pin');
 
-  }
+    document.querySelector('.map').classList.remove('map--faded');
+
+    mockiData.forEach(function (mockiItem) {
+      fragment.appendChild(generateMapPin(template, mockiItem));
+    });
+
+    document.querySelector('.map__pins').appendChild(fragment);
+  };
 
   var getTypeOfResidence = function (residenceType) {
     switch (residenceType) {
@@ -162,30 +171,37 @@
     return residenceType;
   };
 
-  var generateMapCard = function (template, mockiItem) {
-    var mapCard = template.cloneNode(false);
-
+  /* ----------------------- pin's card block generators ---------------------- */
+  var addCardAvatar = function (mapCard, template, mockiItem) {
     if (mockiItem.author.avatar) {
       var popupAvatar = template.querySelector('.popup__avatar');
       popupAvatar.src = mockiItem.author.avatar;
       mapCard.appendChild(popupAvatar);
     }
+  };
 
+  var addCardClose = function (mapCard, template, mockiItem) {
     var popupClose = template.querySelector('.popup__close');
     mapCard.appendChild(popupClose);
+  };
 
+  var addCardTitle = function (mapCard, template, mockiItem) {
     if (mockiItem.offer.title) {
       var popupTitle = template.querySelector('.popup__title');
       // popupTitle.textContent = mockiItem.offer.title;
       mapCard.appendChild(popupTitle);
     }
+  };
 
+  var addCardAddress = function (mapCard, template, mockiItem) {
     if (mockiItem.offer.address) {
       var popupAddress = template.querySelector('.popup__text--address');
       popupAddress.textContent = mockiItem.offer.address;
       mapCard.appendChild(popupAddress);
     }
+  };
 
+  var addCardPrice = function (mapCard, template, mockiItem) {
     if (mockiItem.offer.price) {
       var popupPrice = template.querySelector('.popup__text--price');
       var popupPriceUnit = popupPrice.querySelector('span');
@@ -194,27 +210,35 @@
       popupPrice.appendChild(popupPriceUnit);
       mapCard.appendChild(popupPrice);
     }
+  };
 
+  var addCardType = function (mapCard, template, mockiItem) {
     if (mockiItem.offer.type) {
       var popupType = template.querySelector('.popup__type');
       popupType.textContent = getTypeOfResidence(mockiItem.offer.type);
       mapCard.appendChild(popupType);
     }
+  };
 
+  var addCardCapacity = function (mapCard, template, mockiItem) {
     if (mockiItem.offer.rooms && mockiItem.offer.guests) {
       var popupCapacity = template.querySelector('.popup__text--capacity');
       popupCapacity.textContent = mockiItem.offer.rooms + ' комнаты для '
-        + mockiItem.offer.guests + ' гостей.';
+      + mockiItem.offer.guests + ' гостей.';
       mapCard.appendChild(popupCapacity);
     }
+  };
 
+  var addCardTime = function (mapCard, template, mockiItem) {
     if (mockiItem.offer.checkin && mockiItem.offer.checkout) {
       var popupTime = template.querySelector('.popup__text--time');
       popupTime.textContent = 'Заезд после ' + mockiItem.offer.checkin
-        + ', выезд до ' + mockiItem.offer.checkout + '.';
+      + ', выезд до ' + mockiItem.offer.checkout + '.';
       mapCard.appendChild(popupTime);
     }
+  };
 
+  var addCardFeatures = function (mapCard, template, mockiItem) {
     if (mockiItem.offer.features.length) {
       var popupFeatures = template.querySelector('.popup__features');
 
@@ -227,13 +251,17 @@
 
       mapCard.appendChild(popupFeatures);
     }
+  };
 
+  var addCardDescription = function (mapCard, template, mockiItem) {
     if (mockiItem.offer.description) {
       var popupDescription = template.querySelector('.popup__description');
       // popupDescription.textContent = getTypeOfResidence(mockiItem.offer.description);
       mapCard.appendChild(popupDescription);
     }
+  };
 
+  var addCardPhotos = function (mapCard, template, mockiItem) {
     if (mockiItem.offer.photos.length) {
       var popupPhotos = template.querySelector('.popup__photos');
       var popupPhoto = template.querySelector('.popup__photo');
@@ -245,33 +273,38 @@
 
       mapCard.appendChild(popupPhotos);
     }
+  };
 
-    return mapCard;
+  var generateMapCard = function (mockiItem) {
+    var fragment = document.createDocumentFragment();
+    var template = document.querySelector('#card').content.querySelector('.map__card');
+    var mapCard = template.cloneNode(false);
+
+    addCardAvatar(mapCard, template, mockiItem);
+    addCardClose(mapCard, template, mockiItem);
+    addCardTitle(mapCard, template, mockiItem);
+    addCardAddress(mapCard, template, mockiItem);
+    addCardPrice(mapCard, template, mockiItem);
+    addCardType(mapCard, template, mockiItem);
+    addCardCapacity(mapCard, template, mockiItem);
+    addCardTime(mapCard, template, mockiItem);
+    addCardFeatures(mapCard, template, mockiItem);
+    addCardDescription(mapCard, template, mockiItem);
+    addCardPhotos(mapCard, template, mockiItem);
+
+    fragment.appendChild(mapCard);
+
+    document.querySelector('.map').insertBefore(
+        fragment,
+        document.querySelector('.map__filters-container')
+    );
+
   };
 
   var mockiData = generateMocki();
 
-  /* -------------------------- вывод пинов на карту -------------------------- */
-  document.querySelector('.map').classList.remove('map--faded');
+  generateMapPins(mockiData);
 
-  var fragment = document.createDocumentFragment();
-  var template = document.querySelector('#pin').content.querySelector('.map__pin');
-
-  mockiData.forEach(function (mockiItem) {
-    fragment.appendChild(generateMapPin(template, mockiItem));
-  });
-
-  document.querySelector('.map__pins').appendChild(fragment);
-
-  /* --------------------------- вывод карточки пина -------------------------- */
-  fragment = document.createDocumentFragment();
-  template = document.querySelector('#card').content.querySelector('.map__card');
-
-  fragment.appendChild(generateMapCard(template, mockiData[0]));
-
-  document.querySelector('.map').insertBefore(
-      fragment,
-      document.querySelector('.map__filters-container')
-  );
+  generateMapCard(mockiData[0]);
 
 })();
