@@ -137,8 +137,121 @@
     return mockiData;
   };
 
+  var generateMapPins = function(mokiData) {
+
+  }
+
+  var getTypeOfResidence = function (residenceType) {
+    switch (residenceType) {
+      case 'palace':
+        residenceType = 'Дворец';
+        break;
+      case 'flat':
+        residenceType = 'Квартира';
+        break;
+      case 'house':
+        residenceType = 'Дом';
+        break;
+      case 'bungalo':
+        residenceType = 'Бунгало';
+        break;
+      default:
+        residenceType = 'Квартира';
+        break;
+    }
+    return residenceType;
+  };
+
+  var generateMapCard = function (template, mockiItem) {
+    var mapCard = template.cloneNode(false);
+
+    if (mockiItem.author.avatar) {
+      var popupAvatar = template.querySelector('.popup__avatar');
+      popupAvatar.src = mockiItem.author.avatar;
+      mapCard.appendChild(popupAvatar);
+    }
+
+    var popupClose = template.querySelector('.popup__close');
+    mapCard.appendChild(popupClose);
+
+    if (mockiItem.offer.title) {
+      var popupTitle = template.querySelector('.popup__title');
+      // popupTitle.textContent = mockiItem.offer.title;
+      mapCard.appendChild(popupTitle);
+    }
+
+    if (mockiItem.offer.address) {
+      var popupAddress = template.querySelector('.popup__text--address');
+      popupAddress.textContent = mockiItem.offer.address;
+      mapCard.appendChild(popupAddress);
+    }
+
+    if (mockiItem.offer.price) {
+      var popupPrice = template.querySelector('.popup__text--price');
+      var popupPriceUnit = popupPrice.querySelector('span');
+      popupPrice.innerHTML = mockiItem.offer.price + '&#x20bd;';
+      popupPriceUnit.textContent = '/ночь';
+      popupPrice.appendChild(popupPriceUnit);
+      mapCard.appendChild(popupPrice);
+    }
+
+    if (mockiItem.offer.type) {
+      var popupType = template.querySelector('.popup__type');
+      popupType.textContent = getTypeOfResidence(mockiItem.offer.type);
+      mapCard.appendChild(popupType);
+    }
+
+    if (mockiItem.offer.rooms && mockiItem.offer.guests) {
+      var popupCapacity = template.querySelector('.popup__text--capacity');
+      popupCapacity.textContent = mockiItem.offer.rooms + ' комнаты для '
+        + mockiItem.offer.guests + ' гостей.';
+      mapCard.appendChild(popupCapacity);
+    }
+
+    if (mockiItem.offer.checkin && mockiItem.offer.checkout) {
+      var popupTime = template.querySelector('.popup__text--time');
+      popupTime.textContent = 'Заезд после ' + mockiItem.offer.checkin
+        + ', выезд до ' + mockiItem.offer.checkout + '.';
+      mapCard.appendChild(popupTime);
+    }
+
+    if (mockiItem.offer.features.length) {
+      var popupFeatures = template.querySelector('.popup__features');
+
+      popupFeatures = popupFeatures.cloneNode(false);
+
+      mockiItem.offer.features.forEach(function (feature) {
+        var popupFeature = template.querySelector('.popup__feature--' + feature);
+        popupFeatures.appendChild(popupFeature.cloneNode(true));
+      });
+
+      mapCard.appendChild(popupFeatures);
+    }
+
+    if (mockiItem.offer.description) {
+      var popupDescription = template.querySelector('.popup__description');
+      // popupDescription.textContent = getTypeOfResidence(mockiItem.offer.description);
+      mapCard.appendChild(popupDescription);
+    }
+
+    if (mockiItem.offer.photos.length) {
+      var popupPhotos = template.querySelector('.popup__photos');
+      var popupPhoto = template.querySelector('.popup__photo');
+
+      mockiItem.offer.photos.forEach(function (photoSrc) {
+        popupPhoto.src = photoSrc;
+        popupPhotos.appendChild(popupPhoto.cloneNode(true));
+      });
+
+      mapCard.appendChild(popupPhotos);
+    }
+
+    return mapCard;
+  };
+
   var mockiData = generateMocki();
 
+  /* -------------------------- вывод пинов на карту -------------------------- */
   document.querySelector('.map').classList.remove('map--faded');
 
   var fragment = document.createDocumentFragment();
@@ -149,4 +262,16 @@
   });
 
   document.querySelector('.map__pins').appendChild(fragment);
+
+  /* --------------------------- вывод карточки пина -------------------------- */
+  fragment = document.createDocumentFragment();
+  template = document.querySelector('#card').content.querySelector('.map__card');
+
+  fragment.appendChild(generateMapCard(template, mockiData[0]));
+
+  document.querySelector('.map').insertBefore(
+      fragment,
+      document.querySelector('.map__filters-container')
+  );
+
 })();
