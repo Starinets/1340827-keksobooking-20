@@ -200,7 +200,8 @@
   };
 
   var getCurrentMapPinID = function (evt) {
-    return evt.currentTarget.dataset.offerId;
+    var mapPin = evt.target.closest('.map__pin:not(.map__pin--main)');
+    return mapPin ? mapPin.dataset.offerId : null;
   };
 
   var onMapPinMousedown = function (evt) {
@@ -222,12 +223,12 @@
     for (var index = 0; index < mapCardsDataLength; index++) {
       var mapPin = generateMapPin(templatePin, mapCardsData[index], index);
       fragment.appendChild(mapPin);
-
-      mapPin.addEventListener('mousedown', onMapPinMousedown);
-      mapPin.addEventListener('keydown', onMapPinKeydown);
     }
 
     mapPinsContainer.appendChild(fragment);
+
+    mapPinsContainer.addEventListener('mousedown', onMapPinMousedown);
+    mapPinsContainer.addEventListener('keydown', onMapPinKeydown);
   };
 
   var getTypeOfResidence = function (residenceType) {
@@ -401,6 +402,10 @@
   };
 
   var renderMapCard = function (offerID) {
+    if (offerID === null) {
+      return;
+    }
+
     var mapCardData = mapCardsData[offerID];
     var mapCard = templateCard.cloneNode(false);
 
