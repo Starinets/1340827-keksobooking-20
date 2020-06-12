@@ -47,6 +47,8 @@
     'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
   ];
 
+  var body = document.querySelector('body');
+
   var mapContainer = document.querySelector('.map');
   var mapPinsContainer = mapContainer.querySelector('.map__pins');
   var mapFilterContainer = mapContainer.querySelector('.map__filters-container');
@@ -167,7 +169,7 @@
     mapPin.children[0].src = mockItem.author.avatar;
     mapPin.children[0].alt = mockItem.offer.title;
 
-    mapPin.setAttribute('offerId', offerId);
+    mapPin.dataset.offerId = offerId;
 
     return mapPin;
   };
@@ -198,7 +200,7 @@
   };
 
   var getCurrentMapPinID = function (evt) {
-    return evt.currentTarget.getAttribute('offerid');
+    return evt.currentTarget.dataset.offerId;
   };
 
   var onMapPinMousedown = function (evt) {
@@ -386,8 +388,15 @@
     if (mapCard !== null) {
       mapCard.remove();
 
+      body.removeEventListener('keydown', onKeydown);
       popupClose.removeEventListener('mousedown', onPopupCloseMousedown);
       popupClose.removeEventListener('keydown', onPopupCloseKeydown);
+    }
+  };
+
+  var onKeydown = function (evt) {
+    if (isEscapeEvent(evt)) {
+      deleteMapCard();
     }
   };
 
@@ -413,6 +422,8 @@
         mapCard,
         mapFilterContainer
     );
+
+    body.addEventListener('keydown', onKeydown);
   };
 
   var mapCardsData = generateMock();
@@ -530,6 +541,10 @@
         || evt.code === EventKeyCode.NUMPAD_ENTER;
   };
 
+  var isEscapeEvent = function (evt) {
+    return evt.code === EventKeyCode.ESCAPE;
+  };
+
   var onMapPinMainMousedown = function (evt) {
     if (evt.button === MOUSE_LEFT_BUTTON) {
       setMapEnabled();
@@ -558,7 +573,7 @@
 
     advertGuestsCount.required = ADVERT_SETTINGS.guestsCount.required;
 
-    advertImages.accept = ADVERT_SETTINGS.avatar.images;
+    advertImages.accept = ADVERT_SETTINGS.images.accept;
   };
 
   var setPinMainAddress = function () {
