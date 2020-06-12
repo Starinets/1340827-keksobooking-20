@@ -3,6 +3,8 @@
 (function () {
   var PIN_X_GAP = 50 / 2;
   var PIN_Y_GAP = 70;
+  var PIN_MAIN_X_GAP = 65 / 2;
+  var PIN_MAIN_Y_GAP = 87;
   var NUMBER_OF_ARRAY_ITEMS = 8;
 
   var TYPES_OF_RESIDENCE = ['palace', 'flat', 'house', 'bungalo'];
@@ -390,6 +392,7 @@
 
   var mapFilerForm = document.querySelector('.map__filters');
   var mapFilters = mapFilerForm.querySelectorAll('.map__filter');
+  var mapFeatures = mapFilerForm.querySelector('.map__features');
 
   var mapPinMain = document.querySelector('.map__pin--main');
 
@@ -433,13 +436,21 @@
     '100': ['0'],
   };
 
+  var MOUSE_LEFT_BUTTON = 0;
+
+  var EventKeyCode = {
+    ENTER: 'Enter',
+    NUMPAD_ENTER: 'NumpadEnter',
+    ESCAPE: 'Escape',
+  };
+
   var setFormFieldsDisable = function (fields, state) {
     fields.forEach(function (field) {
       field.disabled = state;
     });
   };
 
-  var setAdvertFiltersDisbled = function () {
+  var setAdvertFiltersDisabled = function () {
     advertForm.classList.add('ad-form--disabled');
     advertAvatar.disabled = true;
     setFormFieldsDisable(advertFields, true);
@@ -454,31 +465,38 @@
   var setMapDisbled = function () {
     mapContainer.classList.add('map--faded');
     mapFilerForm.classList.add('ad-form--disabled');
+    mapFeatures.disabled = true;
     setFormFieldsDisable(mapFilters, true);
+
   };
 
   var setMapEnabled = function () {
     mapContainer.classList.remove('map--faded');
     mapFilerForm.classList.remove('ad-form--disabled');
+    mapFeatures.disabled = false;
     setFormFieldsDisable(mapFilters, false);
 
     renderMapPins(mockiData);
+
+    setAdvertFiltersEnabled();
+
+    mapPinMain.removeEventListener('mousedown', onMapPinMainMousedown);
+    mapPinMain.removeEventListener('keydown', onMapPinMainKeydown);
   };
 
   var isEnterEvent = function (evt) {
-    return evt.code === 'NumpadEnter' || evt.code === 'Enter';
+    return evt.code === EventKeyCode.ENTER
+        || evt.code === EventKeyCode.NUMPAD_ENTER;
   };
 
   var onMapPinMainMousedown = function (evt) {
-    if (evt.button === 0) {
-      setAdvertFiltersEnabled();
+    if (evt.button === MOUSE_LEFT_BUTTON) {
       setMapEnabled();
     }
   };
 
   var onMapPinMainKeydown = function (evt) {
     if (isEnterEvent(evt)) {
-      setAdvertFiltersEnabled();
       setMapEnabled();
     }
   };
@@ -503,13 +521,13 @@
   };
 
   var setPinMainAddress = function () {
-    var pinX = Math.round(parseInt(mapPinMain.style.left, 10) + PIN_X_GAP);
-    var pinY = Math.round(parseInt(mapPinMain.style.top, 10) + PIN_Y_GAP);
+    var pinX = Math.round(parseInt(mapPinMain.style.left, 10) + PIN_MAIN_X_GAP);
+    var pinY = Math.round(parseInt(mapPinMain.style.top, 10) + PIN_MAIN_Y_GAP);
 
     advertAddress.value = pinX + ', ' + pinY;
   };
 
-  var valudateGuestsCount = function () {
+  var validateGuestsCount = function () {
     var validGuestsOptions = ConformityRoomsGuests[advertRoomsCount.value];
     var guests = advertGuestsCount.value;
     var errorMessage = '';
@@ -532,32 +550,28 @@
           errorMessage = 'Не верно заполнено поле';
           break;
       }
-
-    } else {
-      errorMessage = '';
     }
-
     advertGuestsCount.setCustomValidity(errorMessage);
   };
 
-  var setMinPriceForAppartment = function () {
+  var setMinPriceForApartment = function () {
     advertPrice.min = advertPrice.placeholder =
       ADVERT_SETTINGS.minPriceType[advertType.value];
   };
 
   var onAdvertRoomsCountChange = function () {
-    valudateGuestsCount();
+    validateGuestsCount();
   };
 
   var onAdvertGuestCountChange = function () {
-    valudateGuestsCount();
+    validateGuestsCount();
   };
 
   var onAdvertTypeChange = function () {
-    setMinPriceForAppartment();
+    setMinPriceForApartment();
   };
 
-  var onAdvertChekinChange = function () {
+  var onAdvertCheckinChange = function () {
     advertCheckout.value = advertCheckin.value;
   };
 
@@ -567,18 +581,18 @@
 
   configureAdvertFields();
 
-  setAdvertFiltersDisbled();
+  setAdvertFiltersDisabled();
   setMapDisbled();
   setPinMainAddress();
-  setMinPriceForAppartment();
-  valudateGuestsCount();
+  setMinPriceForApartment();
+  validateGuestsCount();
 
   mapPinMain.addEventListener('mousedown', onMapPinMainMousedown);
   mapPinMain.addEventListener('keydown', onMapPinMainKeydown);
 
   advertRoomsCount.addEventListener('change', onAdvertRoomsCountChange);
   advertGuestsCount.addEventListener('change', onAdvertGuestCountChange);
-  advertType.addEventListener('input', onAdvertTypeChange);
-  advertCheckin.addEventListener('change', onAdvertChekinChange);
+  advertType.addEventListener('change', onAdvertTypeChange);
+  advertCheckin.addEventListener('change', onAdvertCheckinChange);
   advertCheckout.addEventListener('change', onAdvertCheckoutChange);
 })();
