@@ -132,7 +132,7 @@
     return arrayOfIntegers;
   };
 
-  var generateMokiItem = function (avatarID, xPosition, yPosition) {
+  var generateMockItem = function (avatarID, xPosition, yPosition) {
     var descriptionID = window
       .util
       .getRandomInteger(0, ADVERT_DESCRIPTIONS.length - 1);
@@ -171,19 +171,19 @@
     return item;
   };
 
-  var generateMapPin = function (template, mockiItem) {
+  var generateMapPin = function (template, mockItem) {
     var mapPin = template.cloneNode(true);
 
-    mapPin.style.left = mockiItem.location.x - PIN_X_GAP + 'px';
-    mapPin.style.top = mockiItem.location.y - PIN_Y_GAP + 'px';
-    mapPin.children[0].src = mockiItem.author.avatar;
-    mapPin.children[0].alt = mockiItem.offer.title;
+    mapPin.style.left = mockItem.location.x - PIN_X_GAP + 'px';
+    mapPin.style.top = mockItem.location.y - PIN_Y_GAP + 'px';
+    mapPin.children[0].src = mockItem.author.avatar;
+    mapPin.children[0].alt = mockItem.offer.title;
 
     return mapPin;
   };
 
-  var generateMocki = function () {
-    var mockiData = [];
+  var generateMock = function () {
+    var mockData = [];
 
     var avatarIDArray = generateUniqueArrayOfInteger(
         NUMBER_OF_ARRAY_ITEMS,
@@ -201,17 +201,17 @@
       );
       var yPosition = window.util.getRandomInteger(130, 630);
 
-      mockiData.push(generateMokiItem(avatarID, xPosition, yPosition));
+      mockData.push(generateMockItem(avatarID, xPosition, yPosition));
     }
 
-    return mockiData;
+    return mockData;
   };
 
-  var renderMapPins = function (mockiData) {
+  var renderMapPins = function (mockData) {
     var fragment = document.createDocumentFragment();
 
-    mockiData.forEach(function (mockiItem) {
-      fragment.appendChild(generateMapPin(templatePin, mockiItem));
+    mockData.forEach(function (mockItem) {
+      fragment.appendChild(generateMapPin(templatePin, mockItem));
     });
 
     mapPinsContainer.appendChild(fragment);
@@ -372,7 +372,7 @@
   //   );
   // };
 
-  var mockiData = generateMocki();
+  var mockiData = generateMock();
 
   // renderMapCard(mockiData[0]);
 
@@ -462,7 +462,7 @@
     setFormFieldsDisable(advertFields, false);
   };
 
-  var setMapDisbled = function () {
+  var setMapDisabled = function () {
     mapContainer.classList.add('map--faded');
     mapFilerForm.classList.add('ad-form--disabled');
     mapFeatures.disabled = true;
@@ -582,7 +582,7 @@
   configureAdvertFields();
 
   setAdvertFiltersDisabled();
-  setMapDisbled();
+  setMapDisabled();
   setPinMainAddress();
   setMinPriceForApartment();
   validateGuestsCount();
