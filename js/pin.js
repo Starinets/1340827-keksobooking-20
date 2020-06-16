@@ -9,15 +9,16 @@
   var Y_GAP = 70;
 
   var container = document.querySelector('.map__pins');
-  var template = document.querySelector('#pin').content.children[0];
+  var template = document.querySelector('#pin').content.querySelector('.map__pin');
 
   var generate = function (item, offerId) {
     var pin = template.cloneNode(true);
 
     pin.style.left = item.location.x - X_GAP + 'px';
     pin.style.top = item.location.y - Y_GAP + 'px';
-    pin.children[0].src = item.author.avatar;
-    pin.children[0].alt = item.offer.title;
+    var image = pin.querySelector('img');
+    image.src = item.author.avatar;
+    image.alt = item.offer.title;
 
     pin.dataset.offerId = offerId;
 
@@ -44,20 +45,41 @@
     return mapPin ? mapPin.dataset.offerId : null;
   };
 
+  var setCurrentPin = function (currentPinID) {
+    var pins = container.querySelectorAll('.map__pin:not(.map__pin--main)');
+
+    pins.forEach(function (item) {
+      if (item.dataset.offerId === currentPinID) {
+        item.classList.add('map__pin--active');
+      } else {
+        item.classList.remove('map__pin--active');
+      }
+    });
+  };
+
   var onContainerMousedown = function (evt) {
     if (isMouseLeftButtonEvent(evt)) {
-      renderCard(getCurrentPinID(evt));
+      var currentPinID = getCurrentPinID(evt);
+      if (currentPinID !== null) {
+        renderCard(currentPinID);
+        setCurrentPin(currentPinID);
+      }
     }
   };
 
   var onContainerKeydown = function (evt) {
     if (isEnterEvent(evt)) {
-      renderCard(getCurrentPinID(evt));
+      var currentPinID = getCurrentPinID(evt);
+      if (currentPinID !== null) {
+        renderCard(currentPinID);
+        setCurrentPin(currentPinID);
+      }
     }
   };
 
   window.pin = {
     render: render,
+    setCurrentPin: setCurrentPin,
   };
 })();
 

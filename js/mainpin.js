@@ -1,6 +1,7 @@
 'use strict';
 
 (function () {
+  var mapState = window.main.mapState;
   var setFormAddress = window.form.setAddress;
   var setMapEnabled = window.map.setEnabled;
   var isEnterEvent = window.util.isEnterEvent;
@@ -12,9 +13,16 @@
   var pin = document.querySelector('.map__pin--main');
 
   var setAddress = function () {
-    var pinX = Math.round(parseInt(pin.style.left, 10) + X_GAP);
-    var pinY = Math.round(parseInt(pin.style.top, 10) + Y_GAP);
+    var pinX;
+    var pinY;
 
+    if (mapState.disabled) {
+      pinX = Math.floor(pin.offsetLeft + pin.offsetWidth / 2);
+      pinY = Math.floor(pin.offsetTop + pin.offsetHeight / 2);
+    } else {
+      pinX = Math.floor(pin.offsetLeft + X_GAP);
+      pinY = Math.floor(pin.offsetTop + Y_GAP);
+    }
     setFormAddress(pinX + ', ' + pinY);
   };
 
@@ -23,12 +31,14 @@
     pin.removeEventListener('keydown', onPinKeydown);
 
     setMapEnabled();
+
+    mapState.disabled = false;
   };
 
   var onPinMousedown = function (evt) {
     if (isMouseLeftButtonEvent(evt)) {
-
       enableMap();
+      setAddress();
     }
   };
 

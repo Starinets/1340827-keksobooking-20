@@ -40,15 +40,16 @@
     images: {
       accept: 'image/png, image/jpeg',
     },
-    minPriceType: {
-      bungalo: 0,
-      house: 5000,
-      flat: 1000,
-      palace: 10000,
-    },
   };
 
-  var ConformityRoomsGuests = {
+  var typesToMinPrice = {
+    bungalo: 0,
+    house: 5000,
+    flat: 1000,
+    palace: 10000,
+  };
+
+  var roomsToGuests = {
     '1': ['1'],
     '2': ['1', '2'],
     '3': ['1', '2', '3'],
@@ -89,7 +90,7 @@
   };
 
   var validateGuestsCount = function () {
-    var validGuestsOptions = ConformityRoomsGuests[roomsCount.value];
+    var validGuestsOptions = roomsToGuests[roomsCount.value];
     var errorMessage = '';
 
     if (validGuestsOptions.indexOf(guestsCount.value) === -1) {
@@ -119,7 +120,7 @@
   };
 
   var setMinPriceForApartment = function () {
-    price.min = price.placeholder = SETTINGS.minPriceType[type.value];
+    price.min = price.placeholder = typesToMinPrice[type.value];
   };
 
   var onRoomsCountChange = function () {

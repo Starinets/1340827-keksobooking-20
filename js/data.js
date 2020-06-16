@@ -1,9 +1,9 @@
 'use strict';
 
 (function () {
-  var getRandomInteger = window.util.getRandomInteger;
-  var getUniqueArrayOfInteger = window.util.getUniqueArrayOfInteger;
-  var getUniqueArrayFromSet = window.util.getUniqueArrayFromSet;
+  var getRandomInteger = window.random.getInteger;
+  var getUniqueArrayOfInteger = window.random.getUniqueArrayOfInteger;
+  var getUniqueArrayFromSet = window.random.getUniqueArrayFromSet;
 
   var NUMBER_OF_ARRAY_ITEMS = 8;
 

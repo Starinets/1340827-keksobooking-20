@@ -5,19 +5,17 @@
   var isEscapeEvent = window.util.isEscapeEvent;
   var isMouseLeftButtonEvent = window.util.isMouseLeftButtonEvent;
 
-  var body = document.querySelector('body');
-
   var mapContainer = document.querySelector('.map');
   var mapFilterContainer = mapContainer.querySelector('.map__filters-container');
 
-  var template = document.querySelector('#card').content.children[0];
+  var template = document.querySelector('#card').content.querySelector('.map__card');
 
   var avatar = template.querySelector('.popup__avatar');
   var close = template.querySelector('.popup__close');
   var title = template.querySelector('.popup__title');
   var address = template.querySelector('.popup__text--address');
   var price = template.querySelector('.popup__text--price');
-  var priceUnit = price.children[0];
+  var priceUnit = price.querySelector('span');
   var type = template.querySelector('.popup__type');
   var capacity = template.querySelector('.popup__text--capacity');
   var time = template.querySelector('.popup__text--time');
@@ -193,14 +191,16 @@
     if (card !== null) {
       card.remove();
 
-      body.removeEventListener('keydown', onKeydown);
+      window.pin.setCurrentPin(null);
+
+      document.removeEventListener('keydown', onEscapeKeydown);
 
       close.removeEventListener('mousedown', onCloseMousedown);
       close.removeEventListener('keydown', onCloseKeydown);
     }
   };
 
-  var onKeydown = function (evt) {
+  var onEscapeKeydown = function (evt) {
     if (isEscapeEvent(evt)) {
       deleteCard();
     }
@@ -233,7 +233,7 @@
         mapFilterContainer
     );
 
-    body.addEventListener('keydown', onKeydown);
+    document.addEventListener('keydown', onEscapeKeydown);
   };
 
   window.card = {

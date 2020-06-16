@@ -6,13 +6,13 @@
 
   var container = document.querySelector('.map');
 
-  var filerForm = document.querySelector('.map__filters');
-  var filters = filerForm.querySelectorAll('.map__filter');
-  var features = filerForm.querySelector('.map__features');
+  var filterForm = document.querySelector('.map__filters');
+  var filters = filterForm.querySelectorAll('.map__filter');
+  var features = filterForm.querySelector('.map__features');
 
   var setDisabled = function () {
     container.classList.add('map--faded');
-    filerForm.classList.add('ad-form--disabled');
+    filterForm.classList.add('ad-form--disabled');
 
     filters.forEach(function (field) {
       field.disabled = true;
@@ -24,7 +24,7 @@
 
   var setEnabled = function () {
     container.classList.remove('map--faded');
-    filerForm.classList.remove('ad-form--disabled');
+    filterForm.classList.remove('ad-form--disabled');
 
     filters.forEach(function (field) {
       field.disabled = false;
