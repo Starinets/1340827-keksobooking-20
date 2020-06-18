@@ -95,7 +95,7 @@
 
   /* ----------------------- pin's card block generators ---------------------- */
   var addCardAvatar = function (card, cardData) {
-    if (cardData.author.avatar) {
+    if (cardData.author.avatar !== null) {
       avatar.src = cardData.author.avatar;
       card.appendChild(avatar);
     }
@@ -109,21 +109,21 @@
   };
 
   var addCardTitle = function (card, cardData) {
-    if (cardData.offer.title) {
+    if (cardData.offer.title !== null) {
       title.textContent = cardData.offer.title;
       card.appendChild(title);
     }
   };
 
   var addCardAddress = function (card, cardData) {
-    if (cardData.offer.address) {
+    if (cardData.offer.address !== null) {
       address.textContent = cardData.offer.address;
       card.appendChild(address);
     }
   };
 
   var addCardPrice = function (card, cardData) {
-    if (cardData.offer.price) {
+    if (cardData.offer.price !== null) {
       price.innerHTML = Number(cardData.offer.price) + '&#x20bd;';
       priceUnit.textContent = '/ночь';
       price.appendChild(priceUnit);
@@ -132,14 +132,14 @@
   };
 
   var addCardType = function (card, cardData) {
-    if (cardData.offer.type) {
+    if (cardData.offer.type !== null) {
       type.textContent = getTypeOfResidence(cardData.offer.type);
       card.appendChild(type);
     }
   };
 
   var addCardCapacity = function (card, cardData) {
-    if (cardData.offer.rooms && cardData.offer.guests) {
+    if (cardData.offer.rooms !== null && cardData.offer.guests !== null) {
       capacity.textContent = cardData.offer.rooms + ' комнаты для '
       + cardData.offer.guests + ' гостей.';
 
@@ -148,7 +148,7 @@
   };
 
   var addCardTime = function (card, cardData) {
-    if (cardData.offer.checkin && cardData.offer.checkout) {
+    if (cardData.offer.checkin !== null && cardData.offer.checkout !== null) {
       time.textContent = 'Заезд после ' + cardData.offer.checkin
       + ', выезд до ' + cardData.offer.checkout + '.';
 
@@ -158,7 +158,7 @@
 
   var addCardFeatures = function (card, cardData) {
     featuresContainer.innerHTML = '';
-    if (cardData.offer.features.length) {
+    if (cardData.offer.features.length > 0) {
       cardData.offer.features.forEach(function (feature) {
         featuresContainer.appendChild(getFeature(feature).cloneNode(true));
       });
@@ -168,7 +168,7 @@
   };
 
   var addCardDescription = function (card, cardData) {
-    if (cardData.offer.description) {
+    if (cardData.offer.description !== null) {
       description.textContent = cardData.offer.description;
       card.appendChild(description);
     }
@@ -176,7 +176,7 @@
 
   var addCardPhotos = function (card, cardData) {
     photosContainer.innerHTML = '';
-    if (cardData.offer.photos.length) {
+    if (cardData.offer.photos.length > 0) {
       cardData.offer.photos.forEach(function (photoSrc) {
         photo.src = photoSrc;
         photosContainer.appendChild(photo.cloneNode(true));

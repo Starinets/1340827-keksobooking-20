@@ -2,15 +2,14 @@
 
 (function () {
   var setMapDisabled = window.map.setDisabled;
-  var generateData = window.data.generate;
+
+  var pinsData = [];
 
   var mapState = {
     disabled: true,
   };
 
   setMapDisabled();
-
-  var pinsData = generateData();
 
   window.main = {
     mapState: mapState,

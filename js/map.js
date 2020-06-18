@@ -1,6 +1,7 @@
 'use strict';
 
 (function () {
+  var generatePinData = window.data.generate;
   var setFormDisable = window.form.setDisable;
   var renderPins = window.pin.render;
 
@@ -32,7 +33,7 @@
 
     features.disabled = false;
 
-    renderPins(window.main.pinsData);
+    generatePinData(renderPins);
 
     setFormDisable(false);
   };
