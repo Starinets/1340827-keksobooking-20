@@ -5,10 +5,13 @@
   var renderCard = window.card.render;
   var isMouseLeftButtonEvent = window.util.isMouseLeftButtonEvent;
 
+  var COUNT_PINS_ON_MAP = 5;
+
   var X_GAP = 50 / 2;
   var Y_GAP = 70;
 
   var container = document.querySelector('.map__pins');
+  var mainPin = container.querySelector('.map__pin--main');
   var template = document.querySelector('#pin').content.querySelector('.map__pin');
 
   var generate = function (item, offerId) {
@@ -17,8 +20,8 @@
     pin.style.left = item.location.x - X_GAP + 'px';
     pin.style.top = item.location.y - Y_GAP + 'px';
     var image = pin.querySelector('img');
-    image.src = item.author.avatar;
-    image.alt = item.offer.title;
+    image.src = item.author.avatar === null ? '' : item.author.avatar;
+    image.alt = item.offer.title === null ? '' : item.offer.title;
 
     pin.dataset.offerId = offerId;
 
@@ -27,14 +30,14 @@
 
   var render = function (mapCardsData) {
     var fragment = document.createDocumentFragment();
-    var mapCardsDataLength = mapCardsData.length;
+    var mapCardsDataLength = Math.min(mapCardsData.length, COUNT_PINS_ON_MAP);
 
     for (var index = 0; index < mapCardsDataLength; index++) {
       var pin = generate(mapCardsData[index], index);
       fragment.appendChild(pin);
     }
 
-    container.appendChild(fragment);
+    container.insertBefore(fragment, mainPin);
 
     container.addEventListener('mousedown', onContainerMousedown);
     container.addEventListener('keydown', onContainerKeydown);
