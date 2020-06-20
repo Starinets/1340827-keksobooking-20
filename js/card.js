@@ -95,10 +95,8 @@
 
   /* ----------------------- pin's card block generators ---------------------- */
   var addCardAvatar = function (card, cardData) {
-    if (cardData.author.avatar !== null) {
-      avatar.src = cardData.author.avatar;
-      card.appendChild(avatar);
-    }
+    avatar.src = cardData.author.avatar;
+    card.appendChild(avatar);
   };
 
   var addCardClose = function (card) {
@@ -109,10 +107,8 @@
   };
 
   var addCardTitle = function (card, cardData) {
-    if (cardData.offer.title !== null) {
-      title.textContent = cardData.offer.title;
-      card.appendChild(title);
-    }
+    title.textContent = cardData.offer.title;
+    card.appendChild(title);
   };
 
   var addCardAddress = function (card, cardData) {
@@ -211,7 +207,7 @@
       return;
     }
 
-    var cardData = window.main.pinsData[offerID];
+    var cardData = window.main.adverts[offerID];
     var card = template.cloneNode(false);
 
     deleteCard();
@@ -237,6 +233,7 @@
   };
 
   window.card = {
+    remove: deleteCard,
     render: render,
   };
 })();

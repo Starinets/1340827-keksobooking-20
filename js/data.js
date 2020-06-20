@@ -12,7 +12,7 @@
     }
 
     if (!item.author.hasOwnProperty('avatar')) {
-      item.author.avatar = null;
+      item.author.avatar = 'img/avatars/default.png';
     }
 
     return item;
@@ -24,7 +24,7 @@
     }
 
     if (!item.offer.hasOwnProperty('title')) {
-      item.offer.title = null;
+      item.offer.title = '';
     }
     if (!item.offer.hasOwnProperty('address')) {
       item.offer.address = null;
@@ -76,18 +76,16 @@
   };
 
   var parse = function (data) {
-    var parsedData = [];
-
     if (!Array.isArray(data)) {
       data = [];
     }
 
-    data.forEach(function (item) {
+    var parsedData = data.map(function (item) {
       item = parseAuthor(item);
       item = parseOffer(item);
       item = parseLocation(item);
 
-      parsedData.push(item);
+      return item;
     });
 
     return parsedData;
@@ -96,7 +94,7 @@
   var generate = function (cb) {
     var onSuccess = function (data) {
       data = parse(data);
-      window.main.pinsData = data;
+      window.main.adverts = data;
       cb(data);
     };
 

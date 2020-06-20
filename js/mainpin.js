@@ -1,14 +1,15 @@
 'use strict';
 
 (function () {
-  var mapState = window.main.mapState;
   var setFormAddress = window.form.setAddress;
   var setMapEnabled = window.map.setEnabled;
   var isEnterEvent = window.util.isEnterEvent;
   var isMouseLeftButtonEvent = window.util.isMouseLeftButtonEvent;
 
+  var DEFAULT_LEFT = 602;
+  var DEFAULT_TOP = 407;
   var X_GAP = 65 / 2;
-  var Y_GAP = 78;
+  var Y_GAP = 82;
   var map = document.querySelector('.map__pins');
   var pin = document.querySelector('.map__pin--main');
 
@@ -26,7 +27,7 @@
     var pinX;
     var pinY;
 
-    if (mapState.disabled) {
+    if (window.map.disabled) {
       pinX = Math.floor(pin.offsetLeft + pin.offsetWidth / 2);
       pinY = Math.floor(pin.offsetTop + pin.offsetHeight / 2);
     } else {
@@ -40,8 +41,6 @@
     pin.removeEventListener('keydown', onPinKeydown);
 
     setMapEnabled();
-
-    mapState.disabled = false;
   };
 
   var movePin = function (evt) {
@@ -71,7 +70,7 @@
 
   var onPinMousedown = function (evt) {
     if (isMouseLeftButtonEvent(evt)) {
-      if (mapState.disabled) {
+      if (window.map.disabled) {
         enableMap();
         setAddress();
       }
@@ -85,6 +84,8 @@
 
       document.addEventListener('mousemove', onPinMousemove);
       document.addEventListener('mouseup', onPinMouseup);
+
+      window.addEventListener('blur', onBlur);
     }
   };
 
@@ -97,6 +98,8 @@
 
     document.removeEventListener('mousemove', onPinMousemove);
     document.removeEventListener('mouseup', onPinMouseup);
+
+    window.removeEventListener('blur', onBlur);
   };
 
   var onPinKeydown = function (evt) {
@@ -109,13 +112,24 @@
   var onBlur = function () {
     document.removeEventListener('mousemove', onPinMousemove);
     document.removeEventListener('mouseup', onPinMouseup);
+
+    window.removeEventListener('blur', onBlur);
+
     setAddress();
   };
 
-  setAddress();
+  var setDefault = function () {
+    pin.addEventListener('mousedown', onPinMousedown);
+    pin.addEventListener('keydown', onPinKeydown);
 
-  pin.addEventListener('mousedown', onPinMousedown);
-  pin.addEventListener('keydown', onPinKeydown);
+    pin.style.left = DEFAULT_LEFT - pin.offsetWidth / 2 + 'px';
+    pin.style.top = DEFAULT_TOP - pin.offsetHeight / 2 + 'px';
 
-  window.addEventListener('blur', onBlur);
+    setAddress();
+  };
+
+  window.mainPin = {
+    reset: setDefault,
+    setAddress: setAddress,
+  };
 })();

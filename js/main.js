@@ -3,16 +3,11 @@
 (function () {
   var setMapDisabled = window.map.setDisabled;
 
-  var pinsData = [];
-
-  var mapState = {
-    disabled: true,
-  };
+  var adverts = [];
 
   setMapDisabled();
 
   window.main = {
-    mapState: mapState,
-    pinsData: pinsData,
+    adverts: adverts,
   };
 })();

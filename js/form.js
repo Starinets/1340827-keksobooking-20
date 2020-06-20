@@ -1,8 +1,12 @@
 'use strict';
 
 (function () {
+  var postFormData = window.backend.save;
+
   var form = document.querySelector('.ad-form');
   var fields = form.querySelectorAll('.ad-form__element');
+  var inputFields = form.querySelectorAll('input[type="text"], input[type="number"], textarea');
+  var checkboxFields = form.querySelectorAll('input[type="checkbox"]');
 
   var avatar = form.querySelector('#avatar');
   var title = form.querySelector('#title');
@@ -56,6 +60,51 @@
     '100': ['0'],
   };
 
+  var defaultValues = {
+    TYPE: 'flat',
+    ROOMS: 1,
+    GUESTS: 3,
+    TIMEIN: '12:00',
+    TIMEOUT: '12:00',
+  };
+
+  var resetFields = function () {
+    inputFields.forEach(function (field) {
+      field.value = '';
+    });
+
+    checkboxFields.forEach(function (field) {
+      field.checked = false;
+    });
+
+    type.value = defaultValues.TYPE;
+    price.min = price.placeholder = typesToMinPrice[type.value];
+    roomsCount.value = defaultValues.ROOMS;
+    guestsCount.value = defaultValues.GUESTS;
+    checkin.value = defaultValues.TIMEIN;
+    checkout.value = defaultValues.TIMEOUT;
+  };
+
+  var removeEventListeners = function () {
+    form.removeEventListener('submit', onFormSubmit);
+    form.removeEventListener('reset', onFormReset);
+    roomsCount.removeEventListener('change', onRoomsCountChange);
+    guestsCount.removeEventListener('change', onGuestCountChange);
+    type.removeEventListener('change', onTypeChange);
+    checkin.removeEventListener('change', onCheckinChange);
+    checkout.removeEventListener('change', onCheckoutChange);
+  };
+
+  var addEventListeners = function () {
+    form.addEventListener('submit', onFormSubmit);
+    form.addEventListener('reset', onFormReset);
+    roomsCount.addEventListener('change', onRoomsCountChange);
+    guestsCount.addEventListener('change', onGuestCountChange);
+    type.addEventListener('change', onTypeChange);
+    checkin.addEventListener('change', onCheckinChange);
+    checkout.addEventListener('change', onCheckoutChange);
+  };
+
   var setFieldsDisable = function (disabled) {
     avatar.disabled = disabled;
 
@@ -65,8 +114,11 @@
 
     if (disabled) {
       form.classList.add('ad-form--disabled');
+      removeEventListeners();
+      resetFields();
     } else {
       form.classList.remove('ad-form--disabled');
+      addEventListeners();
     }
   };
 
@@ -143,18 +195,33 @@
     checkin.value = checkout.value;
   };
 
+  var onFormSubmit = function (evt) {
+    evt.preventDefault();
+
+    var onLoad = function (response) {
+      window.map.setDisabled();
+      window.message.showLoadSuccess(response);
+    };
+
+    var onError = function (error) {
+      window.message.showLoadError(error);
+    };
+
+    var data = new FormData(form);
+
+    postFormData(data, onLoad, onError);
+  };
+
+  var onFormReset = function (evt) {
+    evt.preventDefault();
+
+    resetFields();
+    window.mainPin.setAddress();
+  };
+
   configureFields();
-
-  setFieldsDisable(true);
-
   setMinPriceForApartment();
   validateGuestsCount();
-
-  roomsCount.addEventListener('change', onRoomsCountChange);
-  guestsCount.addEventListener('change', onGuestCountChange);
-  type.addEventListener('change', onTypeChange);
-  checkin.addEventListener('change', onCheckinChange);
-  checkout.addEventListener('change', onCheckoutChange);
 
   window.form = {
     setDisable: setFieldsDisable,

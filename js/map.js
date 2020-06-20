@@ -12,6 +12,8 @@
   var features = filterForm.querySelector('.map__features');
 
   var setDisabled = function () {
+    window.map.disabled = true;
+
     container.classList.add('map--faded');
     filterForm.classList.add('ad-form--disabled');
 
@@ -20,10 +22,16 @@
     });
 
     features.disabled = true;
+
     setFormDisable(true);
+    window.card.remove();
+    window.pin.remove();
+    window.mainPin.reset();
   };
 
   var setEnabled = function () {
+    window.map.disabled = false;
+
     container.classList.remove('map--faded');
     filterForm.classList.remove('ad-form--disabled');
 
@@ -39,6 +47,7 @@
   };
 
   window.map = {
+    disabled: true,
     setDisabled: setDisabled,
     setEnabled: setEnabled,
   };
