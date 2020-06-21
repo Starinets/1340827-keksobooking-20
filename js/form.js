@@ -60,7 +60,7 @@
     '100': ['0'],
   };
 
-  var defaultValues = {
+  var DefaultValues = {
     TYPE: 'flat',
     ROOMS: 1,
     GUESTS: 3,
@@ -77,12 +77,12 @@
       field.checked = false;
     });
 
-    type.value = defaultValues.TYPE;
+    type.value = DefaultValues.TYPE;
     price.min = price.placeholder = typesToMinPrice[type.value];
-    roomsCount.value = defaultValues.ROOMS;
-    guestsCount.value = defaultValues.GUESTS;
-    checkin.value = defaultValues.TIMEIN;
-    checkout.value = defaultValues.TIMEOUT;
+    roomsCount.value = DefaultValues.ROOMS;
+    guestsCount.value = DefaultValues.GUESTS;
+    checkin.value = DefaultValues.TIMEIN;
+    checkout.value = DefaultValues.TIMEOUT;
   };
 
   var removeEventListeners = function () {
@@ -199,8 +199,14 @@
     evt.preventDefault();
 
     var onLoad = function (response) {
-      window.map.setDisabled();
       window.message.showLoadSuccess(response);
+
+      window.map.setDisabled();
+      setFieldsDisable(true);
+      window.card.remove();
+      window.pin.remove();
+      window.mainPin.reset();
+      window.mainPin.setAddress();
     };
 
     var onError = function (error) {
@@ -215,7 +221,11 @@
   var onFormReset = function (evt) {
     evt.preventDefault();
 
-    resetFields();
+    window.map.setDisabled();
+    setFieldsDisable(true);
+    window.card.remove();
+    window.pin.remove();
+    window.mainPin.reset();
     window.mainPin.setAddress();
   };
 

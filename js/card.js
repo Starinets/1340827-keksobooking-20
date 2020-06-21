@@ -187,7 +187,7 @@
     if (card !== null) {
       card.remove();
 
-      window.pin.setCurrentPin(null);
+      window.pin.setCurrent(null);
 
       document.removeEventListener('keydown', onEscapeKeydown);
 
@@ -202,12 +202,7 @@
     }
   };
 
-  var render = function (offerID) {
-    if (offerID === null) {
-      return;
-    }
-
-    var cardData = window.main.adverts[offerID];
+  var render = function (cardData) {
     var card = template.cloneNode(false);
 
     deleteCard();

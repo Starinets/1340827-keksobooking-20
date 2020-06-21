@@ -1,13 +1,8 @@
 'use strict';
 
 (function () {
-  var setMapDisabled = window.map.setDisabled;
-
-  var adverts = [];
-
-  setMapDisabled();
-
-  window.main = {
-    adverts: adverts,
-  };
+  window.map.setDisabled();
+  window.form.setDisable(true);
+  window.mainPin.reset();
+  window.mainPin.setAddress();
 })();

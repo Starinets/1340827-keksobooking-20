@@ -2,36 +2,35 @@
 
 (function () {
   var main = document.querySelector('main');
-  var successMessage = document.querySelector('#success').content
-      .querySelector('.success').cloneNode(true);
-  var errorMessage = document.querySelector('#error').content
-      .querySelector('.error').cloneNode(true);
-
+  var successPopup = document.querySelector('#success').content
+      .querySelector('.success');
+  var errorPopup = document.querySelector('#error').content
+      .querySelector('.error');
   var showLoadSuccess = function () {
-    main.appendChild(successMessage);
+    main.appendChild(successPopup);
 
     document.addEventListener('keydown', onEscapeKeydown);
-    successMessage.addEventListener('click', onSuccessMessageClick);
+    successPopup.addEventListener('click', onSuccessPopupClick);
   };
 
   var hideLoadSuccess = function () {
-    successMessage.remove();
+    successPopup.remove();
 
     document.removeEventListener('keydown', onEscapeKeydown);
   };
 
   var showLoadError = function () {
-    main.appendChild(errorMessage);
+    main.appendChild(errorPopup);
 
     document.addEventListener('keydown', onEscapeKeydown);
-    document.addEventListener('click', onClick);
+    errorPopup.addEventListener('click', onErrorPopupClick);
   };
 
   var hideLoadError = function () {
-    errorMessage.remove();
+    errorPopup.remove();
 
     document.removeEventListener('keydown', onEscapeKeydown);
-    document.removeEventListener('click', onClick);
+    document.removeEventListener('click', onErrorPopupClick);
   };
 
   var onEscapeKeydown = function (evt) {
@@ -41,14 +40,16 @@
     }
   };
 
-  var onSuccessMessageClick = function (evt) {
-    if (window.util.isMouseLeftButtonEvent(evt)) {
+  var onSuccessPopupClick = function (evt) {
+    if (window.util.isMouseLeftButtonEvent(evt)
+      && evt.target === successPopup) {
       hideLoadSuccess();
     }
   };
 
-  var onClick = function (evt) {
-    if (window.util.isMouseLeftButtonEvent(evt)) {
+  var onErrorPopupClick = function (evt) {
+    if (window.util.isMouseLeftButtonEvent(evt)
+      && evt.target === errorPopup) {
       hideLoadError();
     }
   };

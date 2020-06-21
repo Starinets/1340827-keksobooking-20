@@ -10,6 +10,8 @@
   var X_GAP = 50 / 2;
   var Y_GAP = 70;
 
+  var oldPinID = null;
+
   var container = document.querySelector('.map__pins');
   var mainPin = container.querySelector('.map__pin--main');
   var template = document.querySelector('#pin').content.querySelector('.map__pin');
@@ -36,12 +38,12 @@
     });
   };
 
-  var render = function (mapCardsData) {
+  var render = function (adverts) {
     var fragment = document.createDocumentFragment();
-    var mapCardsDataLength = Math.min(mapCardsData.length, COUNT_PINS_ON_MAP);
+    var mapCardsDataLength = Math.min(adverts.length, COUNT_PINS_ON_MAP);
 
     for (var index = 0; index < mapCardsDataLength; index++) {
-      var pin = generate(mapCardsData[index], index);
+      var pin = generate(adverts[index], index);
       fragment.appendChild(pin);
     }
 
@@ -49,6 +51,8 @@
 
     container.addEventListener('mousedown', onContainerMousedown);
     container.addEventListener('keydown', onContainerKeydown);
+
+    window.map.setFiltersEnabled();
   };
 
   var getCurrentPinID = function (evt) {
@@ -56,23 +60,24 @@
     return mapPin ? mapPin.dataset.offerId : null;
   };
 
-  var setCurrentPin = function (currentPinID) {
-    var pins = container.querySelectorAll('.map__pin:not(.map__pin--main)');
-
-    pins.forEach(function (item) {
-      if (item.dataset.offerId === currentPinID) {
-        item.classList.add('map__pin--active');
-      } else {
-        item.classList.remove('map__pin--active');
-      }
-    });
+  var setCurrent = function (currentPinID) {
+    if (oldPinID !== null) {
+      container.querySelector('button[data-offer-id="' + oldPinID + '"]')
+        .classList.remove('map__pin--active');
+      oldPinID = null;
+    }
+    if (currentPinID !== null) {
+      container.querySelector('button[data-offer-id="' + currentPinID + '"]')
+        .classList.add('map__pin--active');
+      oldPinID = currentPinID;
+    }
   };
 
   var showCardForPin = function (evt) {
     var currentPinID = getCurrentPinID(evt);
     if (currentPinID !== null) {
-      renderCard(currentPinID);
-      setCurrentPin(currentPinID);
+      renderCard(window.data.adverts[currentPinID]);
+      setCurrent(currentPinID);
     }
   };
 
@@ -91,7 +96,7 @@
   window.pin = {
     remove: remove,
     render: render,
-    setCurrentPin: setCurrentPin,
+    setCurrent: setCurrent,
   };
 })();
 

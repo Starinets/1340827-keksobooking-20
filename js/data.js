@@ -3,6 +3,9 @@
 (function () {
   var loadPinsData = window.backend.load;
 
+  var adverts = [];
+  var DEFAULT_AVATAR_SRC = 'img/avatars/default.png';
+
   var DEFAULT_PIN_X = 130;
   var DEFAULT_PIN_Y = 0;
 
@@ -12,7 +15,7 @@
     }
 
     if (!item.author.hasOwnProperty('avatar')) {
-      item.author.avatar = 'img/avatars/default.png';
+      item.author.avatar = DEFAULT_AVATAR_SRC;
     }
 
     return item;
@@ -94,7 +97,7 @@
   var generate = function (cb) {
     var onSuccess = function (data) {
       data = parse(data);
-      window.main.adverts = data;
+      window.data.adverts = data;
       cb(data);
     };
 
@@ -107,5 +110,6 @@
 
   window.data = {
     generate: generate,
+    adverts: adverts,
   };
 })();
