@@ -1,16 +1,12 @@
 'use strict';
 
 (function () {
-  var isEnterEvent = window.util.isEnterEvent;
-  var renderCard = window.card.render;
-  var isMouseLeftButtonEvent = window.util.isMouseLeftButtonEvent;
-
   var COUNT_PINS_ON_MAP = 5;
 
   var X_GAP = 50 / 2;
   var Y_GAP = 70;
 
-  var oldPinID = null;
+  var oldPinID = '';
 
   var container = document.querySelector('.map__pins');
   var mainPin = container.querySelector('.map__pin--main');
@@ -40,10 +36,12 @@
 
   var render = function (adverts) {
     var fragment = document.createDocumentFragment();
-    var mapCardsDataLength = Math.min(adverts.length, COUNT_PINS_ON_MAP);
+    var mapCardsDataLength = adverts.length < COUNT_PINS_ON_MAP
+      ? adverts.length : COUNT_PINS_ON_MAP;
 
     for (var index = 0; index < mapCardsDataLength; index++) {
       var pin = generate(adverts[index], index);
+
       fragment.appendChild(pin);
     }
 
@@ -57,38 +55,44 @@
 
   var getCurrentPinID = function (evt) {
     var mapPin = evt.target.closest('.map__pin:not(.map__pin--main)');
-    return mapPin ? mapPin.dataset.offerId : null;
+    return mapPin ? mapPin.dataset.offerId : '';
   };
 
   var setCurrent = function (currentPinID) {
-    if (oldPinID !== null) {
-      container.querySelector('button[data-offer-id="' + oldPinID + '"]')
-        .classList.remove('map__pin--active');
-      oldPinID = null;
+    var pin;
+
+    if (oldPinID !== '') {
+      pin = container.querySelector('button[data-offer-id="' + oldPinID + '"]');
+      if (pin !== null) {
+        pin.classList.remove('map__pin--active');
+        oldPinID = '';
+      }
     }
-    if (currentPinID !== null) {
-      container.querySelector('button[data-offer-id="' + currentPinID + '"]')
-        .classList.add('map__pin--active');
-      oldPinID = currentPinID;
+    if (currentPinID !== '') {
+      pin = container.querySelector('button[data-offer-id="' + currentPinID + '"]');
+      if (pin !== null) {
+        pin.classList.add('map__pin--active');
+        oldPinID = currentPinID;
+      }
     }
   };
 
   var showCardForPin = function (evt) {
     var currentPinID = getCurrentPinID(evt);
-    if (currentPinID !== null) {
-      renderCard(window.data.adverts[currentPinID]);
+    if (currentPinID !== '') {
+      window.card.render(window.data.adverts[currentPinID]);
       setCurrent(currentPinID);
     }
   };
 
   var onContainerMousedown = function (evt) {
-    if (isMouseLeftButtonEvent(evt)) {
+    if (window.util.isMouseLeftButtonEvent(evt)) {
       showCardForPin(evt);
     }
   };
 
   var onContainerKeydown = function (evt) {
-    if (isEnterEvent(evt)) {
+    if (window.util.isEnterEvent(evt)) {
       showCardForPin(evt);
     }
   };

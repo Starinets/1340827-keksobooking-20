@@ -1,10 +1,6 @@
 'use strict';
 
 (function () {
-  var isEnterEvent = window.util.isEnterEvent;
-  var isEscapeEvent = window.util.isEscapeEvent;
-  var isMouseLeftButtonEvent = window.util.isMouseLeftButtonEvent;
-
   var mapContainer = document.querySelector('.map');
   var mapFilterContainer = mapContainer.querySelector('.map__filters-container');
 
@@ -82,20 +78,20 @@
   };
 
   var onCloseMousedown = function (evt) {
-    if (isMouseLeftButtonEvent(evt)) {
+    if (window.util.isMouseLeftButtonEvent(evt)) {
       deleteCard();
     }
   };
 
   var onCloseKeydown = function (evt) {
-    if (isEnterEvent(evt)) {
+    if (window.util.isEnterEvent(evt)) {
       deleteCard();
     }
   };
 
   /* ----------------------- pin's card block generators ---------------------- */
-  var addCardAvatar = function (card, cardData) {
-    avatar.src = cardData.author.avatar;
+  var addCardAvatar = function (card, advert) {
+    avatar.src = advert.author.avatar;
     card.appendChild(avatar);
   };
 
@@ -106,56 +102,56 @@
     close.addEventListener('keydown', onCloseKeydown);
   };
 
-  var addCardTitle = function (card, cardData) {
-    title.textContent = cardData.offer.title;
+  var addCardTitle = function (card, advert) {
+    title.textContent = advert.offer.title;
     card.appendChild(title);
   };
 
-  var addCardAddress = function (card, cardData) {
-    if (cardData.offer.address !== null) {
-      address.textContent = cardData.offer.address;
+  var addCardAddress = function (card, advert) {
+    if (advert.offer.address !== '') {
+      address.textContent = advert.offer.address;
       card.appendChild(address);
     }
   };
 
-  var addCardPrice = function (card, cardData) {
-    if (cardData.offer.price !== null) {
-      price.innerHTML = Number(cardData.offer.price) + '&#x20bd;';
+  var addCardPrice = function (card, advert) {
+    if (advert.offer.price !== '') {
+      price.innerHTML = Number(advert.offer.price) + '&#x20bd;';
       priceUnit.textContent = '/ночь';
       price.appendChild(priceUnit);
       card.appendChild(price);
     }
   };
 
-  var addCardType = function (card, cardData) {
-    if (cardData.offer.type !== null) {
-      type.textContent = getTypeOfResidence(cardData.offer.type);
+  var addCardType = function (card, advert) {
+    if (advert.offer.type !== '') {
+      type.textContent = getTypeOfResidence(advert.offer.type);
       card.appendChild(type);
     }
   };
 
-  var addCardCapacity = function (card, cardData) {
-    if (cardData.offer.rooms !== null && cardData.offer.guests !== null) {
-      capacity.textContent = cardData.offer.rooms + ' комнаты для '
-      + cardData.offer.guests + ' гостей.';
+  var addCardCapacity = function (card, advert) {
+    if (advert.offer.rooms !== '' && advert.offer.guests !== '') {
+      capacity.textContent = advert.offer.rooms + ' комнаты для '
+      + advert.offer.guests + ' гостей.';
 
       card.appendChild(capacity);
     }
   };
 
-  var addCardTime = function (card, cardData) {
-    if (cardData.offer.checkin !== null && cardData.offer.checkout !== null) {
-      time.textContent = 'Заезд после ' + cardData.offer.checkin
-      + ', выезд до ' + cardData.offer.checkout + '.';
+  var addCardTime = function (card, advert) {
+    if (advert.offer.checkin !== '' && advert.offer.checkout !== '') {
+      time.textContent = 'Заезд после ' + advert.offer.checkin
+      + ', выезд до ' + advert.offer.checkout + '.';
 
       card.appendChild(time);
     }
   };
 
-  var addCardFeatures = function (card, cardData) {
+  var addCardFeatures = function (card, advert) {
     featuresContainer.innerHTML = '';
-    if (cardData.offer.features.length > 0) {
-      cardData.offer.features.forEach(function (feature) {
+    if (advert.offer.features.length > 0) {
+      advert.offer.features.forEach(function (feature) {
         featuresContainer.appendChild(getFeature(feature).cloneNode(true));
       });
 
@@ -163,17 +159,17 @@
     }
   };
 
-  var addCardDescription = function (card, cardData) {
-    if (cardData.offer.description !== null) {
-      description.textContent = cardData.offer.description;
+  var addCardDescription = function (card, advert) {
+    if (advert.offer.description !== '') {
+      description.textContent = advert.offer.description;
       card.appendChild(description);
     }
   };
 
-  var addCardPhotos = function (card, cardData) {
+  var addCardPhotos = function (card, advert) {
     photosContainer.innerHTML = '';
-    if (cardData.offer.photos.length > 0) {
-      cardData.offer.photos.forEach(function (photoSrc) {
+    if (advert.offer.photos.length > 0) {
+      advert.offer.photos.forEach(function (photoSrc) {
         photo.src = photoSrc;
         photosContainer.appendChild(photo.cloneNode(true));
       });
@@ -187,7 +183,7 @@
     if (card !== null) {
       card.remove();
 
-      window.pin.setCurrent(null);
+      window.pin.setCurrent('');
 
       document.removeEventListener('keydown', onEscapeKeydown);
 
@@ -197,27 +193,27 @@
   };
 
   var onEscapeKeydown = function (evt) {
-    if (isEscapeEvent(evt)) {
+    if (window.util.isEscapeEvent(evt)) {
       deleteCard();
     }
   };
 
-  var render = function (cardData) {
+  var render = function (advert) {
     var card = template.cloneNode(false);
 
     deleteCard();
 
-    addCardAvatar(card, cardData);
+    addCardAvatar(card, advert);
     addCardClose(card);
-    addCardTitle(card, cardData);
-    addCardAddress(card, cardData);
-    addCardPrice(card, cardData);
-    addCardType(card, cardData);
-    addCardCapacity(card, cardData);
-    addCardTime(card, cardData);
-    addCardFeatures(card, cardData);
-    addCardDescription(card, cardData);
-    addCardPhotos(card, cardData);
+    addCardTitle(card, advert);
+    addCardAddress(card, advert);
+    addCardPrice(card, advert);
+    addCardType(card, advert);
+    addCardCapacity(card, advert);
+    addCardTime(card, advert);
+    addCardFeatures(card, advert);
+    addCardDescription(card, advert);
+    addCardPhotos(card, advert);
 
     mapContainer.insertBefore(
         card,

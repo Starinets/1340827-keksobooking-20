@@ -1,7 +1,49 @@
 'use strict';
 
 (function () {
-  var postFormData = window.backend.save;
+  var SETTING = {
+    form: {
+      action: 'https://javascript.pages.academy/keksobooking'
+    },
+    avatar: {
+      accept: 'image/png, image/jpeg',
+    },
+    title: {
+      minLength: 30,
+      maxLength: 100,
+    },
+    price: {
+      maxValue: 1000000,
+    },
+    address: {
+      readOnly: true,
+    },
+    images: {
+      accept: 'image/png, image/jpeg',
+    },
+  };
+
+  var DefaultValue = {
+    TYPE: 'flat',
+    ROOMS: 1,
+    GUESTS: 3,
+    TIMEIN: '12:00',
+    TIMEOUT: '12:00',
+  };
+
+  var typeToMinPrice = {
+    bungalo: 0,
+    house: 5000,
+    flat: 1000,
+    palace: 10000,
+  };
+
+  var roomsToGuests = {
+    '1': ['1'],
+    '2': ['1', '2'],
+    '3': ['1', '2', '3'],
+    '100': ['0'],
+  };
 
   var form = document.querySelector('.ad-form');
   var fields = form.querySelectorAll('.ad-form__element');
@@ -19,55 +61,6 @@
   var type = form.querySelector('#type');
   var images = form.querySelector('#images');
 
-  var SETTINGS = {
-    form: {
-      action: 'https://javascript.pages.academy/keksobooking'
-    },
-    avatar: {
-      accept: 'image/png, image/jpeg',
-    },
-    title: {
-      required: true,
-      minLength: 30,
-      maxLength: 100,
-    },
-    price: {
-      required: true,
-      maxValue: 1000000,
-    },
-    address: {
-      readOnly: true,
-    },
-    guestsCount: {
-      required: true,
-    },
-    images: {
-      accept: 'image/png, image/jpeg',
-    },
-  };
-
-  var typesToMinPrice = {
-    bungalo: 0,
-    house: 5000,
-    flat: 1000,
-    palace: 10000,
-  };
-
-  var roomsToGuests = {
-    '1': ['1'],
-    '2': ['1', '2'],
-    '3': ['1', '2', '3'],
-    '100': ['0'],
-  };
-
-  var DefaultValues = {
-    TYPE: 'flat',
-    ROOMS: 1,
-    GUESTS: 3,
-    TIMEIN: '12:00',
-    TIMEOUT: '12:00',
-  };
-
   var resetFields = function () {
     inputFields.forEach(function (field) {
       field.value = '';
@@ -77,17 +70,19 @@
       field.checked = false;
     });
 
-    type.value = DefaultValues.TYPE;
-    price.min = price.placeholder = typesToMinPrice[type.value];
-    roomsCount.value = DefaultValues.ROOMS;
-    guestsCount.value = DefaultValues.GUESTS;
-    checkin.value = DefaultValues.TIMEIN;
-    checkout.value = DefaultValues.TIMEOUT;
+    type.value = DefaultValue.TYPE;
+    price.min = price.placeholder = typeToMinPrice[type.value];
+    roomsCount.value = DefaultValue.ROOMS;
+    guestsCount.value = DefaultValue.GUESTS;
+    checkin.value = DefaultValue.TIMEIN;
+    checkout.value = DefaultValue.TIMEOUT;
   };
 
   var removeEventListeners = function () {
     form.removeEventListener('submit', onFormSubmit);
     form.removeEventListener('reset', onFormReset);
+    title.removeEventListener('change', onTitleChange);
+    price.removeEventListener('change', onPriceChange);
     roomsCount.removeEventListener('change', onRoomsCountChange);
     guestsCount.removeEventListener('change', onGuestCountChange);
     type.removeEventListener('change', onTypeChange);
@@ -98,6 +93,8 @@
   var addEventListeners = function () {
     form.addEventListener('submit', onFormSubmit);
     form.addEventListener('reset', onFormReset);
+    title.addEventListener('change', onTitleChange);
+    price.addEventListener('change', onPriceChange);
     roomsCount.addEventListener('change', onRoomsCountChange);
     guestsCount.addEventListener('change', onGuestCountChange);
     type.addEventListener('change', onTypeChange);
@@ -119,26 +116,42 @@
     } else {
       form.classList.remove('ad-form--disabled');
       addEventListeners();
+
+      configureFields();
     }
   };
 
   var configureFields = function () {
-    form.action = SETTINGS.form.action;
+    form.action = SETTING.form.action;
+    avatar.accept = SETTING.avatar.accept;
+    price.max = SETTING.price.maxValue;
+    address.readOnly = SETTING.address.readOnly;
+    images.accept = SETTING.images.accept;
 
-    avatar.accept = SETTINGS.avatar.accept;
+    setMinPriceForApartment();
+    validateTitle();
+    validatePrice();
+    validateGuestsCount();
+  };
 
-    title.required = SETTINGS.title.required;
-    title.minLength = SETTINGS.title.minLength;
-    title.maxLength = SETTINGS.title.maxLength;
+  var validateTitle = function () {
+    var errorMessage = '';
 
-    price.required = SETTINGS.price.required;
-    price.max = SETTINGS.price.maxValue;
+    if (title.value.length < SETTING.title.minLength
+      || title.value.length > SETTING.title.maxLength) {
+      errorMessage = 'Минимальная длина — 30 символов, максимальная длина — 100 символов';
+    }
+    title.setCustomValidity(errorMessage);
+  };
 
-    address.readOnly = SETTINGS.address.readOnly;
+  var validatePrice = function () {
+    var errorMessage = '';
 
-    guestsCount.required = SETTINGS.guestsCount.required;
-
-    images.accept = SETTINGS.images.accept;
+    if (price.value < price.min || price.value > price.max) {
+      errorMessage = 'Стоимость должна быть не менее ' + price.min
+          + ' и не более ' + price.max;
+    }
+    price.setCustomValidity(errorMessage);
   };
 
   var validateGuestsCount = function () {
@@ -172,7 +185,15 @@
   };
 
   var setMinPriceForApartment = function () {
-    price.min = price.placeholder = typesToMinPrice[type.value];
+    price.min = price.placeholder = typeToMinPrice[type.value];
+  };
+
+  var onTitleChange = function () {
+    validateTitle();
+  };
+
+  var onPriceChange = function () {
+    validatePrice();
   };
 
   var onRoomsCountChange = function () {
@@ -185,6 +206,7 @@
 
   var onTypeChange = function () {
     setMinPriceForApartment();
+    validatePrice();
   };
 
   var onCheckinChange = function () {
@@ -199,14 +221,14 @@
     evt.preventDefault();
 
     var onLoad = function (response) {
-      window.message.showLoadSuccess(response);
-
       window.map.setDisabled();
       setFieldsDisable(true);
       window.card.remove();
       window.pin.remove();
       window.mainPin.reset();
       window.mainPin.setAddress();
+
+      window.message.showLoadSuccess(response);
     };
 
     var onError = function (error) {
@@ -215,7 +237,7 @@
 
     var data = new FormData(form);
 
-    postFormData(data, onLoad, onError);
+    window.backend.save(data, onLoad, onError);
   };
 
   var onFormReset = function (evt) {
@@ -230,8 +252,6 @@
   };
 
   configureFields();
-  setMinPriceForApartment();
-  validateGuestsCount();
 
   window.form = {
     setDisable: setFieldsDisable,

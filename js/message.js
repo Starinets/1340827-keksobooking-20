@@ -6,8 +6,12 @@
       .querySelector('.success');
   var errorPopup = document.querySelector('#error').content
       .querySelector('.error');
+  var errorPopupButton = errorPopup.querySelector('.error__button');
+
   var showLoadSuccess = function () {
     main.appendChild(successPopup);
+
+    successPopup.focus();
 
     document.addEventListener('keydown', onEscapeKeydown);
     successPopup.addEventListener('click', onSuccessPopupClick);
@@ -22,8 +26,11 @@
   var showLoadError = function () {
     main.appendChild(errorPopup);
 
+    errorPopupButton.focus();
+
     document.addEventListener('keydown', onEscapeKeydown);
     errorPopup.addEventListener('click', onErrorPopupClick);
+    errorPopupButton.addEventListener('click', onErrorPopupButtonClick);
   };
 
   var hideLoadError = function () {
@@ -53,6 +60,14 @@
       hideLoadError();
     }
   };
+
+  var onErrorPopupButtonClick = function (evt) {
+    if (window.util.isMouseLeftButtonEvent(evt)) {
+      hideLoadError();
+    }
+  };
+
+  successPopup.tabIndex = '1';
 
   window.message = {
     showLoadSuccess: showLoadSuccess,
