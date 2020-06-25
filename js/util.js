@@ -10,8 +10,7 @@
   var MOUSE_LEFT_BUTTON = 0;
 
   var isEnterEvent = function (evt) {
-    return evt.code === EventKeyCode.ENTER
-        || evt.code === EventKeyCode.NUMPAD_ENTER;
+    return evt.key === EventKeyCode.ENTER;
   };
 
   var isMouseLeftButtonEvent = function (evt) {
@@ -19,7 +18,7 @@
   };
 
   var isEscapeEvent = function (evt) {
-    return evt.code === EventKeyCode.ESCAPE;
+    return evt.key === EventKeyCode.ESCAPE;
   };
 
   window.util = {

@@ -1,45 +1,57 @@
 'use strict';
 
 (function () {
-  var generatePinData = window.data.generate;
-  var setFormDisable = window.form.setDisable;
-  var renderPins = window.pin.render;
+  var DEFAULT_FILTER_VALUE = 'any';
 
   var container = document.querySelector('.map');
 
   var filterForm = document.querySelector('.map__filters');
   var filters = filterForm.querySelectorAll('.map__filter');
   var features = filterForm.querySelector('.map__features');
+  var checkboxFields = features.querySelectorAll('input[type="checkbox"]');
 
   var setDisabled = function () {
+    window.map.disabled = true;
+
     container.classList.add('map--faded');
-    filterForm.classList.add('ad-form--disabled');
+
+    features.disabled = true;
 
     filters.forEach(function (field) {
       field.disabled = true;
+      field.value = DEFAULT_FILTER_VALUE;
     });
 
     features.disabled = true;
-    setFormDisable(true);
+
+    checkboxFields.forEach(function (field) {
+      field.checked = false;
+    });
+
   };
 
-  var setEnabled = function () {
-    container.classList.remove('map--faded');
-    filterForm.classList.remove('ad-form--disabled');
-
+  var setFiltersEnabled = function () {
     filters.forEach(function (field) {
       field.disabled = false;
     });
 
     features.disabled = false;
+  };
 
-    generatePinData(renderPins);
+  var setEnabled = function () {
+    window.map.disabled = false;
 
-    setFormDisable(false);
+    container.classList.remove('map--faded');
+
+    window.data.generate(window.pin.render);
+
+    window.form.setDisable(false);
   };
 
   window.map = {
+    disabled: true,
     setDisabled: setDisabled,
     setEnabled: setEnabled,
+    setFiltersEnabled: setFiltersEnabled,
   };
 })();

@@ -1,10 +1,6 @@
 'use strict';
 
 (function () {
-  var isEnterEvent = window.util.isEnterEvent;
-  var renderCard = window.card.render;
-  var isMouseLeftButtonEvent = window.util.isMouseLeftButtonEvent;
-
   var COUNT_PINS_ON_MAP = 5;
 
   var X_GAP = 50 / 2;
@@ -20,20 +16,30 @@
     pin.style.left = item.location.x - X_GAP + 'px';
     pin.style.top = item.location.y - Y_GAP + 'px';
     var image = pin.querySelector('img');
-    image.src = item.author.avatar === null ? '' : item.author.avatar;
-    image.alt = item.offer.title === null ? '' : item.offer.title;
+    image.src = item.author.avatar;
+    image.alt = item.offer.title;
 
     pin.dataset.offerId = offerId;
 
     return pin;
   };
 
-  var render = function (mapCardsData) {
-    var fragment = document.createDocumentFragment();
-    var mapCardsDataLength = Math.min(mapCardsData.length, COUNT_PINS_ON_MAP);
+  var remove = function () {
+    var pins = container.querySelectorAll('.map__pin:not(.map__pin--main)');
 
-    for (var index = 0; index < mapCardsDataLength; index++) {
-      var pin = generate(mapCardsData[index], index);
+    pins.forEach(function (item) {
+      item.remove();
+    });
+  };
+
+  var render = function (adverts) {
+    var fragment = document.createDocumentFragment();
+    var mapCardsCount = adverts.length < COUNT_PINS_ON_MAP
+      ? adverts.length : COUNT_PINS_ON_MAP;
+
+    for (var index = 0; index < mapCardsCount; index++) {
+      var pin = generate(adverts[index], index);
+
       fragment.appendChild(pin);
     }
 
@@ -41,48 +47,37 @@
 
     container.addEventListener('mousedown', onContainerMousedown);
     container.addEventListener('keydown', onContainerKeydown);
+
+    window.map.setFiltersEnabled();
   };
 
-  var getCurrentPinID = function (evt) {
-    var mapPin = evt.target.closest('.map__pin:not(.map__pin--main)');
-    return mapPin ? mapPin.dataset.offerId : null;
-  };
+  var showCardForPin = function (evt) {
+    var pin = evt.target.closest('.map__pin:not(.map__pin--main)');
+    if (pin !== null && !pin.classList.contains('map__pin--active')) {
+      window.card.render(window.data.adverts[pin.dataset.offerId]);
+      pin.classList.add('map__pin--active');
 
-  var setCurrentPin = function (currentPinID) {
-    var pins = container.querySelectorAll('.map__pin:not(.map__pin--main)');
-
-    pins.forEach(function (item) {
-      if (item.dataset.offerId === currentPinID) {
-        item.classList.add('map__pin--active');
-      } else {
-        item.classList.remove('map__pin--active');
-      }
-    });
+      window.card.setOnRemove(function () {
+        pin.classList.remove('map__pin--active');
+      });
+    }
   };
 
   var onContainerMousedown = function (evt) {
-    if (isMouseLeftButtonEvent(evt)) {
-      var currentPinID = getCurrentPinID(evt);
-      if (currentPinID !== null) {
-        renderCard(currentPinID);
-        setCurrentPin(currentPinID);
-      }
+    if (window.util.isMouseLeftButtonEvent(evt)) {
+      showCardForPin(evt);
     }
   };
 
   var onContainerKeydown = function (evt) {
-    if (isEnterEvent(evt)) {
-      var currentPinID = getCurrentPinID(evt);
-      if (currentPinID !== null) {
-        renderCard(currentPinID);
-        setCurrentPin(currentPinID);
-      }
+    if (window.util.isEnterEvent(evt)) {
+      showCardForPin(evt);
     }
   };
 
   window.pin = {
+    remove: remove,
     render: render,
-    setCurrentPin: setCurrentPin,
   };
 })();
 

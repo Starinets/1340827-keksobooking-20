@@ -1,10 +1,6 @@
 'use strict';
 
 (function () {
-  var isEnterEvent = window.util.isEnterEvent;
-  var isEscapeEvent = window.util.isEscapeEvent;
-  var isMouseLeftButtonEvent = window.util.isMouseLeftButtonEvent;
-
   var mapContainer = document.querySelector('.map');
   var mapFilterContainer = mapContainer.querySelector('.map__filters-container');
 
@@ -32,6 +28,9 @@
   var description = template.querySelector('.popup__description');
   var photosContainer = template.querySelector('.popup__photos').cloneNode(false);
   var photo = template.querySelector('.popup__photo');
+
+  var card = null;
+  var onCardRemove = null;
 
   var getTypeOfResidence = function (residenceType) {
     switch (residenceType) {
@@ -82,84 +81,80 @@
   };
 
   var onCloseMousedown = function (evt) {
-    if (isMouseLeftButtonEvent(evt)) {
+    if (window.util.isMouseLeftButtonEvent(evt)) {
       deleteCard();
     }
   };
 
   var onCloseKeydown = function (evt) {
-    if (isEnterEvent(evt)) {
+    if (window.util.isEnterEvent(evt)) {
       deleteCard();
     }
   };
 
   /* ----------------------- pin's card block generators ---------------------- */
-  var addCardAvatar = function (card, cardData) {
-    if (cardData.author.avatar !== null) {
-      avatar.src = cardData.author.avatar;
-      card.appendChild(avatar);
-    }
+  var addCardAvatar = function (advert) {
+    avatar.src = advert.author.avatar;
+    card.appendChild(avatar);
   };
 
-  var addCardClose = function (card) {
+  var addCardClose = function () {
     card.appendChild(close);
 
     close.addEventListener('mousedown', onCloseMousedown);
     close.addEventListener('keydown', onCloseKeydown);
   };
 
-  var addCardTitle = function (card, cardData) {
-    if (cardData.offer.title !== null) {
-      title.textContent = cardData.offer.title;
-      card.appendChild(title);
-    }
+  var addCardTitle = function (advert) {
+    title.textContent = advert.offer.title;
+    card.appendChild(title);
   };
 
-  var addCardAddress = function (card, cardData) {
-    if (cardData.offer.address !== null) {
-      address.textContent = cardData.offer.address;
+  var addCardAddress = function (advert) {
+    if (advert.offer.address !== '') {
+      address.textContent = advert.offer.address;
       card.appendChild(address);
     }
   };
 
-  var addCardPrice = function (card, cardData) {
-    if (cardData.offer.price !== null) {
-      price.innerHTML = Number(cardData.offer.price) + '&#x20bd;';
+  var addCardPrice = function (advert) {
+    if (advert.offer.price !== '') {
+      price.innerHTML = Number(advert.offer.price) + '&#x20bd;';
       priceUnit.textContent = '/ночь';
       price.appendChild(priceUnit);
       card.appendChild(price);
     }
   };
 
-  var addCardType = function (card, cardData) {
-    if (cardData.offer.type !== null) {
-      type.textContent = getTypeOfResidence(cardData.offer.type);
+  var addCardType = function (advert) {
+    if (advert.offer.type !== '') {
+      type.textContent = getTypeOfResidence(advert.offer.type);
       card.appendChild(type);
     }
   };
 
-  var addCardCapacity = function (card, cardData) {
-    if (cardData.offer.rooms !== null && cardData.offer.guests !== null) {
-      capacity.textContent = cardData.offer.rooms + ' комнаты для '
-      + cardData.offer.guests + ' гостей.';
+  var addCardCapacity = function (advert) {
+    if (advert.offer.rooms !== '' && advert.offer.guests !== '') {
+      capacity.textContent = advert.offer.rooms + ' комнаты для '
+      + advert.offer.guests + ' гостей.';
 
       card.appendChild(capacity);
     }
   };
 
-  var addCardTime = function (card, cardData) {
-    if (cardData.offer.checkin !== null && cardData.offer.checkout !== null) {
-      time.textContent = 'Заезд после ' + cardData.offer.checkin
-      + ', выезд до ' + cardData.offer.checkout + '.';
+  var addCardTime = function (advert) {
+    if (advert.offer.checkin !== '' && advert.offer.checkout !== '') {
+      time.textContent = 'Заезд после ' + advert.offer.checkin
+      + ', выезд до ' + advert.offer.checkout + '.';
 
       card.appendChild(time);
     }
   };
 
-  var addCardFeatures = function (card, cardData) {
+  var addCardFeatures = function (advert) {
     featuresContainer.innerHTML = '';
-    if (cardData.offer.features.length > 0) {
-      cardData.offer.features.forEach(function (feature) {
+    if (advert.offer.features.length > 0) {
+      advert.offer.features.forEach(function (feature) {
         featuresContainer.appendChild(getFeature(feature).cloneNode(true));
       });
 
@@ -167,17 +162,17 @@
     }
   };
 
-  var addCardDescription = function (card, cardData) {
-    if (cardData.offer.description !== null) {
-      description.textContent = cardData.offer.description;
+  var addCardDescription = function (advert) {
+    if (advert.offer.description !== '') {
+      description.textContent = advert.offer.description;
       card.appendChild(description);
     }
   };
 
-  var addCardPhotos = function (card, cardData) {
+  var addCardPhotos = function (advert) {
     photosContainer.innerHTML = '';
-    if (cardData.offer.photos.length > 0) {
-      cardData.offer.photos.forEach(function (photoSrc) {
+    if (advert.offer.photos.length > 0) {
+      advert.offer.photos.forEach(function (photoSrc) {
         photo.src = photoSrc;
         photosContainer.appendChild(photo.cloneNode(true));
       });
@@ -187,46 +182,41 @@
   };
 
   var deleteCard = function () {
-    var card = mapContainer.querySelector('.map__card');
     if (card !== null) {
       card.remove();
+      card = null;
 
-      window.pin.setCurrentPin(null);
+      if (typeof onCardRemove === 'function') {
+        onCardRemove();
+        onCardRemove = null;
+      }
 
       document.removeEventListener('keydown', onEscapeKeydown);
-
-      close.removeEventListener('mousedown', onCloseMousedown);
-      close.removeEventListener('keydown', onCloseKeydown);
     }
   };
 
   var onEscapeKeydown = function (evt) {
-    if (isEscapeEvent(evt)) {
+    if (window.util.isEscapeEvent(evt)) {
       deleteCard();
     }
   };
 
-  var render = function (offerID) {
-    if (offerID === null) {
-      return;
-    }
-
-    var cardData = window.main.pinsData[offerID];
-    var card = template.cloneNode(false);
-
+  var render = function (advert) {
     deleteCard();
 
-    addCardAvatar(card, cardData);
-    addCardClose(card);
-    addCardTitle(card, cardData);
-    addCardAddress(card, cardData);
-    addCardPrice(card, cardData);
-    addCardType(card, cardData);
-    addCardCapacity(card, cardData);
-    addCardTime(card, cardData);
-    addCardFeatures(card, cardData);
-    addCardDescription(card, cardData);
-    addCardPhotos(card, cardData);
+    card = template.cloneNode(false);
+
+    addCardAvatar(advert);
+    addCardClose();
+    addCardTitle(advert);
+    addCardAddress(advert);
+    addCardPrice(advert);
+    addCardType(advert);
+    addCardCapacity(advert);
+    addCardTime(advert);
+    addCardFeatures(advert);
+    addCardDescription(advert);
+    addCardPhotos(advert);
 
     mapContainer.insertBefore(
         card,
@@ -236,7 +226,13 @@
     document.addEventListener('keydown', onEscapeKeydown);
   };
 
+  var setOnCardRemove = function (onRemove) {
+    onCardRemove = onRemove;
+  };
+
   window.card = {
+    remove: deleteCard,
     render: render,
+    setOnRemove: setOnCardRemove,
   };
 })();

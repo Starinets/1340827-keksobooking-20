@@ -1,10 +1,12 @@
 'use strict';
 
 (function () {
-  var loadPinsData = window.backend.load;
+  var DEFAULT_AVATAR_SRC = 'img/avatars/default.png';
 
   var DEFAULT_PIN_X = 130;
   var DEFAULT_PIN_Y = 0;
+
+  var adverts = [];
 
   var parseAuthor = function (item) {
     if (!item.hasOwnProperty('author')) {
@@ -12,7 +14,7 @@
     }
 
     if (!item.author.hasOwnProperty('avatar')) {
-      item.author.avatar = null;
+      item.author.avatar = DEFAULT_AVATAR_SRC;
     }
 
     return item;
@@ -24,34 +26,34 @@
     }
 
     if (!item.offer.hasOwnProperty('title')) {
-      item.offer.title = null;
+      item.offer.title = '';
     }
     if (!item.offer.hasOwnProperty('address')) {
-      item.offer.address = null;
+      item.offer.address = '';
     }
     if (!item.offer.hasOwnProperty('price')) {
-      item.offer.price = null;
+      item.offer.price = '';
     }
     if (!item.offer.hasOwnProperty('type')) {
-      item.offer.type = null;
+      item.offer.type = '';
     }
     if (!item.offer.hasOwnProperty('rooms')) {
-      item.offer.rooms = null;
+      item.offer.rooms = '';
     }
     if (!item.offer.hasOwnProperty('guests')) {
-      item.offer.guests = null;
+      item.offer.guests = '';
     }
     if (!item.offer.hasOwnProperty('checkin')) {
-      item.offer.checkin = null;
+      item.offer.checkin = '';
     }
     if (!item.offer.hasOwnProperty('checkout')) {
-      item.offer.checkout = null;
+      item.offer.checkout = '';
     }
     if (!item.offer.hasOwnProperty('features')) {
       item.offer.features = [];
     }
     if (!item.offer.hasOwnProperty('description')) {
-      item.offer.description = null;
+      item.offer.description = '';
     }
     if (!item.offer.hasOwnProperty('photos')) {
       item.offer.photos = [];
@@ -76,18 +78,16 @@
   };
 
   var parse = function (data) {
-    var parsedData = [];
-
     if (!Array.isArray(data)) {
       data = [];
     }
 
-    data.forEach(function (item) {
+    var parsedData = data.map(function (item) {
       item = parseAuthor(item);
       item = parseOffer(item);
       item = parseLocation(item);
 
-      parsedData.push(item);
+      return item;
     });
 
     return parsedData;
@@ -96,7 +96,7 @@
   var generate = function (cb) {
     var onSuccess = function (data) {
       data = parse(data);
-      window.main.pinsData = data;
+      window.data.adverts = data;
       cb(data);
     };
 
@@ -104,10 +104,11 @@
 
     };
 
-    loadPinsData(onSuccess, onError);
+    window.backend.load(onSuccess, onError);
   };
 
   window.data = {
     generate: generate,
+    adverts: adverts,
   };
 })();
