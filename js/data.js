@@ -97,7 +97,7 @@
     var onSuccess = function (data) {
       data = parse(data);
       window.data.adverts = data;
-      cb(data);
+      cb();
     };
 
     var onError = function () {

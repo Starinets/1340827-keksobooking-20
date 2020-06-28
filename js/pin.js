@@ -48,13 +48,13 @@
     container.addEventListener('mousedown', onContainerMousedown);
     container.addEventListener('keydown', onContainerKeydown);
 
-    window.map.setFiltersEnabled();
+    window.filter.setEnabled();
   };
 
   var showCardForPin = function (evt) {
     var pin = evt.target.closest('.map__pin:not(.map__pin--main)');
     if (pin !== null && !pin.classList.contains('map__pin--active')) {
-      window.card.render(window.data.adverts[pin.dataset.offerId]);
+      window.card.render(window.filter.adverts[pin.dataset.offerId]);
       pin.classList.add('map__pin--active');
 
       window.card.setOnRemove(function () {
