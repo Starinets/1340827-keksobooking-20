@@ -32,52 +32,20 @@
   var card = null;
   var onCardRemove = null;
 
-  var getTypeOfResidence = function (residenceType) {
-    switch (residenceType) {
-      case 'palace':
-        residenceType = 'Дворец';
-        break;
-      case 'flat':
-        residenceType = 'Квартира';
-        break;
-      case 'house':
-        residenceType = 'Дом';
-        break;
-      case 'bungalo':
-        residenceType = 'Бунгало';
-        break;
-      default:
-        residenceType = 'Квартира';
-        break;
-    }
-    return residenceType;
+  var typeEnToRu = {
+    'palace': 'Дворец',
+    'flat': 'Квартира',
+    'house': 'Дом',
+    'bungalo': 'Бунгало',
   };
 
-  var getFeature = function (feature) {
-    switch (feature) {
-      case 'wifi':
-        feature = featureWifi;
-        break;
-      case 'dishwasher':
-        feature = featureDishwasher;
-        break;
-      case 'parking':
-        feature = featureParking;
-        break;
-      case 'washer':
-        feature = featureWasher;
-        break;
-      case 'elevator':
-        feature = featureElevator;
-        break;
-      case 'conditioner':
-        feature = featureConditioner;
-        break;
-      default:
-        break;
-    }
-
-    return feature;
+  var featureNameToHandle = {
+    'wifi': featureWifi,
+    'dishwasher': featureDishwasher,
+    'parking': featureParking,
+    'washer': featureWasher,
+    'elevator': featureElevator,
+    'conditioner': featureConditioner,
   };
 
   var onCloseMousedown = function (evt) {
@@ -128,7 +96,7 @@
 
   var addCardType = function (advert) {
     if (advert.offer.type !== '') {
-      type.textContent = getTypeOfResidence(advert.offer.type);
+      type.textContent = typeEnToRu[advert.offer.type];
       card.appendChild(type);
     }
   };
@@ -155,7 +123,9 @@
     featuresContainer.innerHTML = '';
     if (advert.offer.features.length > 0) {
       advert.offer.features.forEach(function (feature) {
-        featuresContainer.appendChild(getFeature(feature).cloneNode(true));
+        featuresContainer.appendChild(
+            featureNameToHandle[feature].cloneNode(true)
+        );
       });
 
       card.appendChild(featuresContainer);

@@ -249,6 +249,7 @@
     window.pin.remove();
     window.mainPin.reset();
     window.mainPin.setAddress();
+    window.data.adverts = [];
   };
 
   configureFields();

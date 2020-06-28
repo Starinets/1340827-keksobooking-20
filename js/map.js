@@ -12,6 +12,7 @@
 
   var setEnabled = function () {
     window.map.disabled = false;
+    window.filter.setEnabled();
 
     container.classList.remove('map--faded');
 

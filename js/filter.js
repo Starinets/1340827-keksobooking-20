@@ -2,6 +2,7 @@
 
 (function () {
   var DEFAULT_FILTER_VALUE = 'any';
+  var COUNT_PINS_ON_MAP = 5;
 
   var filterForm = document.querySelector('.map__filters');
   var filters = filterForm.querySelectorAll('.map__filter');
@@ -12,16 +13,19 @@
   var setFiltersToAdverts = function () {
     window.card.remove();
 
-    var adverts = window.data.adverts.filter(function (advert) {
-      if (housingType.value !== DEFAULT_FILTER_VALUE) {
-        return (advert.offer.type === housingType.value) ? true : false;
+    var adverts = [];
+
+    for (var index = 0; index < window.data.adverts.length; index++) {
+      if (housingType.value === DEFAULT_FILTER_VALUE
+        || window.data.adverts[index].offer.type === housingType.value) {
+        adverts.push(index);
       }
 
-      return true;
-    });
+      if (adverts.length === COUNT_PINS_ON_MAP) {
+        break;
+      }
+    }
 
-    window.filter.adverts = adverts;
-    window.pin.remove();
     window.pin.render(adverts);
   };
 
@@ -30,21 +34,25 @@
   };
 
   var setDisabled = function () {
+    filterForm.reset();
+
     filters.forEach(function (field) {
       field.disabled = true;
-      field.value = DEFAULT_FILTER_VALUE;
     });
 
     features.disabled = true;
+
+    filterForm.removeEventListener('change', onFieldChange);
   };
 
   var setEnabled = function () {
     filters.forEach(function (field) {
       field.disabled = false;
-      field.addEventListener('change', onFieldChange);
     });
 
     features.disabled = false;
+
+    filterForm.addEventListener('change', onFieldChange);
   };
 
   window.filter = {
