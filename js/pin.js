@@ -1,8 +1,6 @@
 'use strict';
 
 (function () {
-  var COUNT_PINS_ON_MAP = 5;
-
   var X_GAP = 50 / 2;
   var Y_GAP = 70;
 
@@ -33,22 +31,19 @@
   };
 
   var render = function (adverts) {
+    remove();
     var fragment = document.createDocumentFragment();
-    var mapCardsCount = adverts.length < COUNT_PINS_ON_MAP
-      ? adverts.length : COUNT_PINS_ON_MAP;
 
-    for (var index = 0; index < mapCardsCount; index++) {
-      var pin = generate(adverts[index], index);
+    adverts.forEach(function (advert) {
+      var pin = generate(window.data.adverts[advert], advert);
 
       fragment.appendChild(pin);
-    }
+    });
 
     container.insertBefore(fragment, mainPin);
 
     container.addEventListener('mousedown', onContainerMousedown);
     container.addEventListener('keydown', onContainerKeydown);
-
-    window.map.setFiltersEnabled();
   };
 
   var showCardForPin = function (evt) {
