@@ -62,92 +62,113 @@
 
   /* ----------------------- pin's card block generators ---------------------- */
   var addCardAvatar = function (advert) {
-    avatar.src = advert.author.avatar;
-    card.appendChild(avatar);
+    var avatarNode = avatar.cloneNode();
+
+    avatarNode.src = advert.author.avatar;
+    card.appendChild(avatarNode);
   };
 
   var addCardClose = function () {
-    card.appendChild(close);
+    var closeNode = close.cloneNode();
 
-    close.addEventListener('mousedown', onCloseMousedown);
-    close.addEventListener('keydown', onCloseKeydown);
+    card.appendChild(closeNode);
+
+    closeNode.addEventListener('mousedown', onCloseMousedown);
+    closeNode.addEventListener('keydown', onCloseKeydown);
   };
 
   var addCardTitle = function (advert) {
-    title.textContent = advert.offer.title;
-    card.appendChild(title);
+    var titleNode = title.cloneNode();
+
+    titleNode.textContent = advert.offer.title;
+    card.appendChild(titleNode);
   };
 
   var addCardAddress = function (advert) {
     if (advert.offer.address !== '') {
-      address.textContent = advert.offer.address;
-      card.appendChild(address);
+      var addressNode = address.cloneNode();
+
+      addressNode.textContent = advert.offer.address;
+      card.appendChild(addressNode);
     }
   };
 
   var addCardPrice = function (advert) {
     if (advert.offer.price !== '') {
-      price.innerHTML = Number(advert.offer.price) + '&#x20bd;';
-      priceUnit.textContent = '/ночь';
-      price.appendChild(priceUnit);
-      card.appendChild(price);
+      var priceNode = price.cloneNode(false);
+      var priceUnitNode = priceUnit.cloneNode();
+
+      priceNode.innerHTML = Number(advert.offer.price) + '&#x20bd;';
+      priceUnitNode.textContent = '/ночь';
+      priceNode.appendChild(priceUnitNode);
+      card.appendChild(priceNode);
     }
   };
 
   var addCardType = function (advert) {
     if (advert.offer.type !== '') {
-      type.textContent = typeEnToRu[advert.offer.type];
-      card.appendChild(type);
+      var typeNode = type.cloneNode();
+
+      typeNode.textContent = typeEnToRu[advert.offer.type];
+      card.appendChild(typeNode);
     }
   };
 
   var addCardCapacity = function (advert) {
     if (advert.offer.rooms !== '' && advert.offer.guests !== '') {
-      capacity.textContent = advert.offer.rooms + ' комнаты для '
+      var capacityNode = capacity.cloneNode();
+
+      capacityNode.textContent = advert.offer.rooms + ' комнаты для '
       + advert.offer.guests + ' гостей.';
 
-      card.appendChild(capacity);
+      card.appendChild(capacityNode);
     }
   };
 
   var addCardTime = function (advert) {
     if (advert.offer.checkin !== '' && advert.offer.checkout !== '') {
-      time.textContent = 'Заезд после ' + advert.offer.checkin
+      var timeNode = time.cloneNode();
+
+      timeNode.textContent = 'Заезд после ' + advert.offer.checkin
       + ', выезд до ' + advert.offer.checkout + '.';
 
-      card.appendChild(time);
+      card.appendChild(timeNode);
     }
   };
 
   var addCardFeatures = function (advert) {
-    featuresContainer.innerHTML = '';
     if (advert.offer.features.length > 0) {
+      var featuresContainerNode = featuresContainer.cloneNode(false);
+
       advert.offer.features.forEach(function (feature) {
-        featuresContainer.appendChild(
-            featureNameToHandle[feature].cloneNode(true)
+        featuresContainerNode.appendChild(
+            featureNameToHandle[feature].cloneNode()
         );
       });
 
-      card.appendChild(featuresContainer);
+      card.appendChild(featuresContainerNode);
     }
   };
 
   var addCardDescription = function (advert) {
     if (advert.offer.description !== '') {
-      description.textContent = advert.offer.description;
-      card.appendChild(description);
+      var descriptionNode = description.cloneNode();
+
+      descriptionNode.textContent = advert.offer.description;
+      card.appendChild(descriptionNode);
     }
   };
 
   var addCardPhotos = function (advert) {
-    photosContainer.innerHTML = '';
     if (advert.offer.photos.length > 0) {
+      var photosContainerNode = photosContainer.cloneNode(false);
+
       advert.offer.photos.forEach(function (photoSrc) {
         photo.src = photoSrc;
-        photosContainer.appendChild(photo.cloneNode(true));
+        photosContainerNode.appendChild(photo.cloneNode());
       });
 
-      card.appendChild(photosContainer);
+      card.appendChild(photosContainerNode);
     }
   };
 

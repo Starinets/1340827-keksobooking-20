@@ -6,11 +6,25 @@
 
   var stylesToPreview = {
     avatar: {
-      default: '',
-      edited: 'width: 70px; height: 70px; border-radius: 5px; margin-left: -15px',
+      default: {
+        width: '40px',
+        height: '44px',
+        borderRadius: '0',
+        marginLeft: '0',
+      },
+      edited: {
+        width: '70px',
+        height: '70px',
+        borderRadius: '5px',
+        marginLeft: '-15px',
+      },
     },
     images: {
-      edited: 'width: 70px; height: 70px; border-radius: 5px',
+      edited: {
+        width: '70px',
+        height: '70px',
+        borderRadius: '5px',
+      },
     }
   };
 
@@ -22,7 +36,7 @@
   var imagesFileName = form.querySelector('#images');
   var imageContainer = form.querySelector('.ad-form__photo');
 
-  var fileChooser = function (file, onLoad) {
+  var fileChooser = function (file, onCheckPassed) {
     var fileName = file.name.toLowerCase();
 
     var matches = FILE_TYPES.some(function (it) {
@@ -30,36 +44,53 @@
     });
 
     if (matches) {
-      var reader = new FileReader();
-
-      reader.addEventListener('load', function () {
-        onLoad(reader.result);
-      });
-
-      reader.readAsDataURL(file);
+      onCheckPassed(file);
     }
   };
 
-  var renderAvatar = function (imageSrc) {
-    avatarPreview.style = stylesToPreview.avatar.edited;
-    avatarPreview.src = imageSrc;
+  var loadAvatar = function (fileName) {
+    var editedStyle = stylesToPreview.avatar.edited;
+
+    var onAvatarLoad = function () {
+      URL.revokeObjectURL(avatarPreview.src);
+      avatarPreview.removeEventListener('load', onAvatarLoad);
+    };
+
+    avatarPreview.addEventListener('load', onAvatarLoad);
+    avatarPreview.src = URL.createObjectURL(fileName);
+
+    avatarPreview.style.width = editedStyle.width;
+    avatarPreview.style.height = editedStyle.height;
+    avatarPreview.style.borderRadius = editedStyle.borderRadius;
+    avatarPreview.style.marginLeft = editedStyle.marginLeft;
   };
 
-  var renderImages = function (imageSrc) {
-    var fragment = document.createElement('img');
+  var loadImage = function (fileName) {
+    var imageElement = document.createElement('img');
+    var editedStyle = stylesToPreview.avatar.edited;
+
+    var onImageLoad = function () {
+      URL.revokeObjectURL(imageElement.src);
+      imageElement.removeEventListener('load', onImageLoad);
+    };
+
+    imageElement.addEventListener('load', onImageLoad);
+    imageElement.src = URL.createObjectURL(fileName);
 
     imageContainer.innerHTML = '';
-    fragment.style = stylesToPreview.images.edited;
-    fragment.src = imageSrc;
-    imageContainer.appendChild(fragment);
+    imageElement.style.width = editedStyle.width;
+    imageElement.style.height = editedStyle.height;
+    imageElement.style.borderRadius = editedStyle.borderRadius;
+
+    imageContainer.appendChild(imageElement);
   };
 
   var onAvatarFileNameChange = function () {
-    fileChooser(avatarFileName.files[0], renderAvatar);
+    fileChooser(avatarFileName.files[0], loadAvatar);
   };
 
   var onImagesFileNameChange = function () {
-    fileChooser(imagesFileName.files[0], renderImages);
+    fileChooser(imagesFileName.files[0], loadImage);
   };
 
   var setEnabled = function () {
@@ -68,8 +99,13 @@
   };
 
   var setDisabled = function () {
+    var defaultStyle = stylesToPreview.avatar.default;
+
+    avatarPreview.style.width = defaultStyle.width;
+    avatarPreview.style.height = defaultStyle.height;
+    avatarPreview.style.borderRadius = defaultStyle.borderRadius;
+    avatarPreview.style.marginLeft = defaultStyle.marginLeft;
     avatarPreview.src = DEFAULT_AVATAR_SRC;
-    avatarPreview.style = stylesToPreview.avatar.default;
 
     imageContainer.innerHTML = '';
 
