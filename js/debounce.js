@@ -5,12 +5,11 @@
   var lastTimeoutId = 0;
 
   var debounce = function (onTimeout) {
-    if (lastTimeoutId !== 0) {
+    if (lastTimeoutId > 0) {
       window.clearTimeout(lastTimeoutId);
     }
 
     lastTimeoutId = window.setTimeout(function () {
-      lastTimeoutId = 0;
       onTimeout();
     }, DEBOUNCE_INTERVAL);
   };
