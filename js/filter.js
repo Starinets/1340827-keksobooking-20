@@ -13,7 +13,7 @@
   var housingRooms = filterForm.querySelector('#housing-rooms');
   var housingGuests = filterForm.querySelector('#housing-guests');
 
-  var priceRange = {
+  var priceToRange = {
     'low': {
       from: 0,
       to: 9999,
@@ -35,8 +35,8 @@
 
   var filterByPrice = function (advert) {
     return housingPrice.value === DEFAULT_FILTER_VALUE
-        || advert.offer.price >= priceRange[housingPrice.value].from
-            && advert.offer.price <= priceRange[housingPrice.value].to;
+        || advert.offer.price >= priceToRange[housingPrice.value].from
+            && advert.offer.price <= priceToRange[housingPrice.value].to;
   };
 
   var filterByRooms = function (advert) {
@@ -50,8 +50,10 @@
   };
 
   var filterByFeatures = function (advert, features) {
+    var advertFeatures = advert.offer.features;
+
     return features.every(function (feature) {
-      return advert.offer.features.includes(feature);
+      return advertFeatures.includes(feature);
     });
   };
 

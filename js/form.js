@@ -1,6 +1,7 @@
 'use strict';
 
 (function () {
+  var DEFAULT_ERROR_MESSAGE = 'Не верно заполнено поле';
   var SETTING = {
     form: {
       action: 'https://javascript.pages.academy/keksobooking'
@@ -45,9 +46,16 @@
     '100': ['0'],
   };
 
+  var roomCountToErrorMessage = {
+    '1': 'Можно выбрать только 1го гостя',
+    '2': 'Можно выбрать 2х или 1го гостя',
+    '3': 'Можно выбрать 3х, 2х или 1го гостя',
+    '100': 'Не для гостей',
+  };
+
   var form = document.querySelector('.ad-form');
   var fields = form.querySelectorAll('.ad-form__element');
-  var inputFields = form.querySelectorAll('input[type="text"], input[type="number"], textarea');
+  var inputFields = form.querySelectorAll('input[type="text"], input[type="number"], input[type="file"], textarea');
   var checkboxFields = form.querySelectorAll('input[type="checkbox"]');
 
   var avatar = form.querySelector('#avatar');
@@ -81,8 +89,6 @@
   var removeEventListeners = function () {
     form.removeEventListener('submit', onFormSubmit);
     form.removeEventListener('reset', onFormReset);
-    title.removeEventListener('change', onTitleChange);
-    price.removeEventListener('change', onPriceChange);
     roomsCount.removeEventListener('change', onRoomsCountChange);
     guestsCount.removeEventListener('change', onGuestCountChange);
     type.removeEventListener('change', onTypeChange);
@@ -93,8 +99,6 @@
   var addEventListeners = function () {
     form.addEventListener('submit', onFormSubmit);
     form.addEventListener('reset', onFormReset);
-    title.addEventListener('change', onTitleChange);
-    price.addEventListener('change', onPriceChange);
     roomsCount.addEventListener('change', onRoomsCountChange);
     guestsCount.addEventListener('change', onGuestCountChange);
     type.addEventListener('change', onTypeChange);
@@ -110,10 +114,16 @@
     });
 
     if (disabled) {
+      window.load.setDisabled();
+      title.required = false;
+      price.required = false;
       form.classList.add('ad-form--disabled');
       removeEventListeners();
       resetFields();
     } else {
+      window.load.setEnabled();
+      title.required = true;
+      price.required = true;
       form.classList.remove('ad-form--disabled');
       addEventListeners();
 
@@ -124,34 +134,14 @@
   var configureFields = function () {
     form.action = SETTING.form.action;
     avatar.accept = SETTING.avatar.accept;
+    title.minLength = SETTING.title.minLength;
+    title.maxLength = SETTING.title.maxLength;
     price.max = SETTING.price.maxValue;
     address.readOnly = SETTING.address.readOnly;
     images.accept = SETTING.images.accept;
 
     setMinPriceForApartment();
-    validateTitle();
-    validatePrice();
     validateGuestsCount();
-  };
-
-  var validateTitle = function () {
-    var errorMessage = '';
-
-    if (title.value.length < SETTING.title.minLength
-      || title.value.length > SETTING.title.maxLength) {
-      errorMessage = 'Минимальная длина — 30 символов, максимальная длина — 100 символов';
-    }
-    title.setCustomValidity(errorMessage);
-  };
-
-  var validatePrice = function () {
-    var errorMessage = '';
-
-    if (price.value < price.min || price.value > price.max) {
-      errorMessage = 'Стоимость должна быть не менее ' + price.min
-          + ' и не более ' + price.max;
-    }
-    price.setCustomValidity(errorMessage);
   };
 
   var validateGuestsCount = function () {
@@ -159,24 +149,10 @@
     var errorMessage = '';
 
     if (validGuestsOptions.indexOf(guestsCount.value) === -1) {
-      switch (roomsCount.value) {
-        case '1':
-          errorMessage = 'Можно выбрать только 1го гостя';
-          break;
-        case '2':
-          errorMessage = 'Можно выбрать 2х или 1го гостя';
-          break;
-        case '3':
-          errorMessage = 'Можно выбрать 3х, 2х или 1го гостя';
-          break;
-        case '100':
-          errorMessage = 'Не для гостей';
-          break;
-        default:
-          errorMessage = 'Не верно заполнено поле';
-          break;
-      }
+      errorMessage = roomCountToErrorMessage[roomsCount.value]
+          || DEFAULT_ERROR_MESSAGE;
     }
+
     guestsCount.setCustomValidity(errorMessage);
   };
 
@@ -186,14 +162,6 @@
 
   var setMinPriceForApartment = function () {
     price.min = price.placeholder = typeToMinPrice[type.value];
-  };
-
-  var onTitleChange = function () {
-    validateTitle();
-  };
-
-  var onPriceChange = function () {
-    validatePrice();
   };
 
   var onRoomsCountChange = function () {
@@ -206,7 +174,6 @@
 
   var onTypeChange = function () {
     setMinPriceForApartment();
-    validatePrice();
   };
 
   var onCheckinChange = function () {
