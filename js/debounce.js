@@ -2,15 +2,16 @@
 
 (function () {
   var DEBOUNCE_INTERVAL = 500;
-  var lastTimeout = null;
+  var lastTimeout = 0;
 
-  var debounce = function (cb) {
-    if (lastTimeout) {
+  var debounce = function (onTimeout) {
+    if (lastTimeout !== 0) {
       window.clearTimeout(lastTimeout);
     }
 
     lastTimeout = window.setTimeout(function () {
-      cb();
+      lastTimeout = 0;
+      onTimeout();
     }, DEBOUNCE_INTERVAL);
   };
 

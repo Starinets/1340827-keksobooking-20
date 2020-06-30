@@ -47,7 +47,7 @@
 
   var form = document.querySelector('.ad-form');
   var fields = form.querySelectorAll('.ad-form__element');
-  var inputFields = form.querySelectorAll('input[type="text"], input[type="number"], textarea');
+  var inputFields = form.querySelectorAll('input[type="text"], input[type="number"], input[type="file"], textarea');
   var checkboxFields = form.querySelectorAll('input[type="checkbox"]');
 
   var avatar = form.querySelector('#avatar');
@@ -110,10 +110,12 @@
     });
 
     if (disabled) {
+      window.load.setDisabled();
       form.classList.add('ad-form--disabled');
       removeEventListeners();
       resetFields();
     } else {
+      window.load.setEnabled();
       form.classList.remove('ad-form--disabled');
       addEventListeners();
 
