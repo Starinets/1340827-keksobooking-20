@@ -21,10 +21,15 @@
     return evt.key === EventKeyCode.ESCAPE;
   };
 
+  var isEmptyString = function (checkedString) {
+    return checkedString === '';
+  };
+
   window.util = {
     isEnterEvent: isEnterEvent,
     isEscapeEvent: isEscapeEvent,
     isMouseLeftButtonEvent: isMouseLeftButtonEvent,
+    isEmptyString: isEmptyString,
   };
 })();
 

@@ -85,7 +85,7 @@
   };
 
   var addCardAddress = function (advert) {
-    if (advert.offer.address !== '') {
+    if (!window.util.isEmptyString(advert.offer.address)) {
       var addressNode = address.cloneNode();
 
       addressNode.textContent = advert.offer.address;
@@ -94,7 +94,7 @@
   };
 
   var addCardPrice = function (advert) {
-    if (advert.offer.price !== '') {
+    if (!window.util.isEmptyString(advert.offer.price)) {
       var priceNode = price.cloneNode(false);
       var priceUnitNode = priceUnit.cloneNode();
 
@@ -106,7 +106,7 @@
   };
 
   var addCardType = function (advert) {
-    if (advert.offer.type !== '') {
+    if (!window.util.isEmptyString(advert.offer.type)) {
       var typeNode = type.cloneNode();
 
       typeNode.textContent = typeEnToRu[advert.offer.type];
@@ -115,7 +115,8 @@
   };
 
   var addCardCapacity = function (advert) {
-    if (advert.offer.rooms !== '' && advert.offer.guests !== '') {
+    if (!window.util.isEmptyString(advert.offer.rooms)
+      && !window.util.isEmptyString(advert.offer.guests)) {
       var capacityNode = capacity.cloneNode();
 
       capacityNode.textContent = advert.offer.rooms + ' комнаты для '
@@ -126,7 +127,8 @@
   };
 
   var addCardTime = function (advert) {
-    if (advert.offer.checkin !== '' && advert.offer.checkout !== '') {
+    if (!window.util.isEmptyString(advert.offer.checkin)
+      && !window.util.isEmptyString(advert.offer.checkout)) {
       var timeNode = time.cloneNode();
 
       timeNode.textContent = 'Заезд после ' + advert.offer.checkin
@@ -151,7 +153,7 @@
   };
 
   var addCardDescription = function (advert) {
-    if (advert.offer.description !== '') {
+    if (!window.util.isEmptyString(advert.offer.description)) {
       var descriptionNode = description.cloneNode();
 
       descriptionNode.textContent = advert.offer.description;
